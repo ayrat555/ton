@@ -29,4 +29,32 @@ defmodule TonTest do
                |> Base.encode16(case: :lower)
     end
   end
+
+  describe "mnemonic_to_seed/2" do
+    test "converts mnemonic to seed" do
+      mnemonic =
+        "about about about about about about about about about about about about about about about about about about about about about about about about"
+
+      assert <<216, 145, 38, 65, 213, 88, 1, 110, 133, 87, 170, 172, 147, 33, 96, 73, 164, 121,
+               52, 37, 94, 100, 25, 147, 124, 8, 232, 161, 104, 122, 232,
+               44>> = seed = Ton.mnemonic_to_seed(mnemonic)
+
+      assert "d8912641d558016e8557aaac93216049a47934255e6419937c08e8a1687ae82c" =
+               Base.encode16(seed, case: :lower)
+    end
+
+    test "converts mnemonic with password to seed" do
+      mnemonic =
+        "about about about about about about about about about about about about about about about about about about about about about about about about"
+
+      password = "password"
+
+      assert <<35, 167, 22, 244, 245, 19, 147, 41, 251, 239, 17, 2, 254, 103, 119, 222, 122, 20,
+               84, 57, 242, 193, 60, 46, 85, 100, 179, 72, 115, 100, 229,
+               251>> = seed = Ton.mnemonic_to_seed(mnemonic, password)
+
+      assert "23a716f4f5139329fbef1102fe6777de7a145439f2c13c2e5564b3487364e5fb" =
+               Base.encode16(seed, case: :lower)
+    end
+  end
 end
