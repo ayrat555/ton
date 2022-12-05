@@ -3,6 +3,9 @@ defmodule Ton do
   Documentation for `Ton`.
   """
 
+  alias Salty.Sign.Ed25519
+  alias Ton.KeyPair
+
   @pbkdf2_options %{
     alg: "sha512",
     iterations: 100_000,
@@ -12,14 +15,40 @@ defmodule Ton do
   }
 
   @doc """
-  Converts mnemonic to seed.
+  Generates a key pair from a mnemonic.
+
+    ## Examples
+
+    iex> Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
+    %Ton.KeyPair{
+      secret_key: <<149, 222, 63, 223, 23, 72, 240, 224, 233, 177, 155, 16, 101,
+        229, 182, 172, 23, 131, 54, 43, 195, 139, 217, 194, 100, 19, 252, 105, 68,
+        30, 96, 95, 73, 245, 11, 185, 76, 95, 180, 99, 83, 74, 157, 13, 240, 216,
+        227, 155, 203, 147, 16, 149, 137, 218, 246, 81, 151, 233, 21, 28, 55, 119,
+        64, 47>>,
+      public_key: <<73, 245, 11, 185, 76, 95, 180, 99, 83, 74, 157, 13, 240, 216,
+        227, 155, 203, 147, 16, 149, 137, 218, 246, 81, 151, 233, 21, 28, 55, 119,
+        64, 47>>
+    }
+  """
+  @spec mnemonic_to_keypair(String.t(), String.t()) :: {binary(), binary()}
+  def mnemonic_to_keypair(mnemonic, password \\ "") do
+    {:ok, public_key, private_key} =
+      mnemonic
+      |> mnemonic_to_seed(password)
+      |> Ed25519.seed_keypair()
+
+    KeyPair.new(private_key, public_key)
+  end
+
+  @doc """
+  Converts a mnemonic to a seed.
 
   ## Examples
 
       iex> Ton.mnemonic_to_seed("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
       # 95de3fdf1748f0e0e9b19b1065e5b6ac1783362bc38bd9c26413fc69441e605f
       <<149, 222, 63, 223, 23, 72, 240, 224, 233, 177, 155, 16, 101, 229, 182, 172, 23, 131, 54, 43, 195, 139, 217, 194, 100, 19, 252, 105, 68, 30, 96, 95>>
-
   """
   @spec mnemonic_to_seed(String.t(), String.t()) :: binary()
   def mnemonic_to_seed(mnemonic, password \\ "") do
@@ -32,7 +61,7 @@ defmodule Ton do
   end
 
   @doc """
-  Converts mnemonic to entropy.
+  Converts a mnemonic to an entropy.
 
   ## Examples
 
