@@ -31,7 +31,7 @@ defmodule Ton do
         64, 47>>
     }
   """
-  @spec mnemonic_to_keypair(String.t(), String.t()) :: {binary(), binary()}
+  @spec mnemonic_to_keypair(String.t(), String.t()) :: {binary(), binary()} | no_return
   def mnemonic_to_keypair(mnemonic, password \\ "") do
     {:ok, public_key, private_key} =
       mnemonic
