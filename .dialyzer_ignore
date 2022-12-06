@@ -1,0 +1,2 @@
+lib/ton.ex:35: Function mnemonic_to_keypair/1 has no local return
+lib/ton.ex:35: Function mnemonic_to_keypair/2 has no local return

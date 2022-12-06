@@ -13,6 +13,9 @@ defmodule Ton.MixProject do
         maintainers: ["Ayrat Badykov"],
         licenses: ["MIT"],
         links: %{"GitHub" => "https://github.com/ayrat555/ton"}
+      ],
+      dialyzer: [
+        ignore_warnings: ".dialyzer_ignore"
       ]
     ]
   end
