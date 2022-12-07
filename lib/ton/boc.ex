@@ -30,7 +30,7 @@ defmodule Ton.Boc do
           flags = (flags_byte &&& 16) * 2 + (flags_byte &&& 8)
           size_bytes = rem(flags_byte, 8)
 
-          {has_idx, has_crc32, has_cache_bits, flags, size_bytes}
+          {has_idx, hash_crc32, has_cache_bits, flags, size_bytes}
 
         prefix == @lean_boc_magic_prefix ->
           <<size_bytes::8, tail::binary>> = serialized_boc
@@ -40,7 +40,7 @@ defmodule Ton.Boc do
           has_cache_bits = false
           flags = 0
 
-          {has_idx, has_crc32, has_cache_bits, flags, size_bytes}
+          {has_idx, hash_crc32, has_cache_bits, flags, size_bytes}
 
         prefix == @lean_boc_magic_prefix_crc ->
           <<size_bytes::8, tail::binary>> = serialized_boc
@@ -50,7 +50,7 @@ defmodule Ton.Boc do
           has_cache_bits = false
           flags = 0
 
-          {has_idx, has_crc32, has_cache_bits, flags, size_bytes}
+          {has_idx, hash_crc32, has_cache_bits, flags, size_bytes}
 
         true ->
           # TODO: handle gracefully
