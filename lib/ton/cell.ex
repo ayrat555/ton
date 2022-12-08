@@ -3,9 +3,9 @@ defmodule Ton.Cell do
 
   def max_depth(refs, depth \\ 0)
 
-  def max_depth(%Cell{refs: []}, depth), do: 0
+  def max_depth(%__MODULE__{refs: []}, depth), do: depth
 
-  def max_depth(%Cell{refs: [cell | cell_tail]}, depth) do
+  def max_depth(%__MODULE__{refs: [cell | cell_tail]}, depth) do
     current_cell_depth = max_depth(cell)
 
     depth =
@@ -15,6 +15,6 @@ defmodule Ton.Cell do
         depth
       end
 
-    max_depth(%Cell{refs: cell_tail}, depth)
+    max_depth(%__MODULE__{refs: cell_tail}, depth)
   end
 end
