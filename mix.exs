@@ -32,6 +32,7 @@ defmodule Ton.MixProject do
     [
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:ex_pbkdf2, "~> 0.7.1"},
+      {:crc32c, "~> 1.1.0"},
       {:libsalty2, "~> 0.3"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
