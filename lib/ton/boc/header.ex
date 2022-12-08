@@ -21,12 +21,12 @@ defmodule Ton.Boc.Header do
   @lean_boc_magic_prefix <<104, 255, 101, 243>>
   @lean_boc_magic_prefix_crc <<172, 195, 167, 40>>
 
-  def parse_header(binary_data) when byte_size(binary_data) < 5 do
+  def parse(binary_data) when byte_size(binary_data) < 5 do
     # TODO: handle gracefully
     raise "not enough bytes for magic prefix"
   end
 
-  def parse_header(binary_data) do
+  def parse(binary_data) do
     <<prefix::binary-size(4), serialized_boc::binary>> = binary_data
 
     {has_idx, hash_crc32, has_cache_bits, flags, size_bytes} =
@@ -34,9 +34,9 @@ defmodule Ton.Boc.Header do
         prefix == @reach_boc_magic_prefix ->
           <<flags_byte::8, _tail::binary>> = serialized_boc
 
-          has_idx = !!(flags_byte &&& 128)
-          hash_crc32 = !!(flags_byte &&& 64)
-          has_cache_bits = !!(flags_byte &&& 32)
+          has_idx = (flags_byte &&& 128) != 0
+          hash_crc32 = (flags_byte &&& 64) != 0
+          has_cache_bits = (flags_byte &&& 32) != 0
           flags = (flags_byte &&& 16) * 2 + (flags_byte &&& 8)
           size_bytes = rem(flags_byte, 8)
 
