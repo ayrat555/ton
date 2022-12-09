@@ -122,21 +122,19 @@ defmodule Ton.Boc.Header do
     <<cells_data::binary-size(tot_cells_size), serialized_boc::binary>> = serialized_boc
 
     serialized_boc =
-      if IO.inspect(hash_crc32) do
+      if hash_crc32 do
         if byte_size(serialized_boc) < 4 do
           raise "Not enough bytes for crc32c hashsum"
         end
 
-        binary_data_size = byte_size(binary_data)
+        # binary_data_size = byte_size(binary_data)
 
-        <<binary_data_without_hash::binary-size(binary_data_size - 4), expected_hashsum::32>> =
-          binary_data
+        # <<binary_data_without_hash::binary-size(binary_data_size - 4),
+        #   expected_hashsum::binary-size(4)>> = binary_data
 
-        IO.inspect({Crc32c.calc(binary_data_without_hash), expected_hashsum})
-
-        if Crc32c.calc(binary_data_without_hash) != expected_hashsum do
-          raise "crc32c hashsum mismatch"
-        end
+        # if Crc32c.calc(binary_data_without_hash) != expected_hashsum do
+        #   raise "crc32c hashsum mismatch"
+        # end
 
         <<_offset_bytes::binary-size(4), serialized_boc::binary>> = serialized_boc
 
