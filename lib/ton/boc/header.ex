@@ -127,10 +127,14 @@ defmodule Ton.Boc.Header do
           raise "Not enough bytes for crc32c hashsum"
         end
 
-        # binary_data_size = byte_size(binary_data)
+        binary_data_size = byte_size(binary_data)
 
-        # <<binary_data_without_hash::binary-size(binary_data_size - 4),
-        #   expected_hashsum::binary-size(4)>> = binary_data
+        <<binary_data_without_hash::binary-size(binary_data_size - 4),
+          expected_hashsum::binary-size(4)>> = binary_data
+
+        IO.inspect(expected_hashsum)
+
+        Utils.crc32c(binary_data_without_hash) |> IO.inspect()
 
         # if Crc32c.calc(binary_data_without_hash) != expected_hashsum do
         #   raise "crc32c hashsum mismatch"
