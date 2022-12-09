@@ -43,14 +43,167 @@ defmodule Ton.CellTest do
           112, 116, 128, 24, 200, 203, 5, 203, 2, 80, 5, 207, 22, 80, 3, 250, 2, 19, 203, 106,
           203, 31, 18, 203, 63, 201, 115, 251, 0, 0, 10, 244, 0, 201, 237, 84>>
 
-      {reversed_cells, residuer} =
-        Enum.reduce(1..6, {[], data}, fn _idx, {acc, data_acc} ->
+      {reversed_cells, ""} =
+        Enum.reduce(1..20, {[], data}, fn _idx, {acc, data_acc} ->
           {cell, remaining_data} = Cell.parse(data_acc, 1)
 
           {[cell | acc], remaining_data}
         end)
 
-      Enum.reverse(reversed_cells) |> IO.inspect()
+      assert [
+               %Ton.Cell{
+                 refs: [1],
+                 data: %Ton.Bitstring{
+                   length: 80,
+                   array: [255, 0, 244, 164, 19, 244, 188, 242, 200, 11],
+                   cursor: 80
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [2, 3],
+                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [4, 5],
+                 data: %Ton.Bitstring{length: 8, array: [64], cursor: 5},
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [16, 17, 18, 19],
+                 data: %Ton.Bitstring{
+                   length: 992,
+                   array: _,
+                   cursor: 992
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [6, 7],
+                 data: %Ton.Bitstring{
+                   length: 920,
+                   array: _,
+                   cursor: 920
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [8, 9],
+                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 480,
+                   array: _,
+                   cursor: 480
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 552,
+                   array: _,
+                   cursor: 552
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [10, 11],
+                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 360,
+                   array: _,
+                   cursor: 358
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [12, 13],
+                 data: %Ton.Bitstring{length: 8, array: [80], cursor: 5},
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 72,
+                   array: [184, 201, 126, 212, 77, 13, 112, 177, 240],
+                   cursor: 69
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 248,
+                   array: _,
+                   cursor: 243
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [14, 15],
+                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 104,
+                   array: [173, 206, 118, 162, 104, 64, 32, 107, 144, 235, 133, 255, 128],
+                   cursor: 98
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 104,
+                   array: [175, 29, 246, 162, 104, 64, 16, 107, 144, 235, 133, 143, 128],
+                   cursor: 98
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 440,
+                   array: _,
+                   cursor: 440
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 448,
+                   array: _,
+                   cursor: 448
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{
+                   length: 432,
+                   array: _,
+                   cursor: 432
+                 },
+                 kind: :ordinary
+               },
+               %Ton.Cell{
+                 refs: [],
+                 data: %Ton.Bitstring{length: 40, array: [244, 0, 201, 237, 84], cursor: 40},
+                 kind: :ordinary
+               }
+             ] = Enum.reverse(reversed_cells)
     end
   end
 end

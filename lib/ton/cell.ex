@@ -45,12 +45,16 @@ defmodule Ton.Cell do
     bits = Bitstring.set_top_upped_array(data, fullfilled_bytes)
 
     {reversed_refs, residue} =
-      Enum.reduce(1..ref_num, {[], cell_data}, fn _idx, {refs, current_cell_data} ->
-        {ref, current_cell_data} =
-          Utils.read_n_bytes_uint(current_cell_data, reference_index_size)
+      if ref_num != 0 do
+        Enum.reduce(1..ref_num, {[], cell_data}, fn _idx, {refs, current_cell_data} ->
+          {ref, current_cell_data} =
+            Utils.read_n_bytes_uint(current_cell_data, reference_index_size)
 
-        {[ref | refs], current_cell_data}
-      end)
+          {[ref | refs], current_cell_data}
+        end)
+      else
+        {[], cell_data}
+      end
 
     refs = Enum.reverse(reversed_refs)
 
