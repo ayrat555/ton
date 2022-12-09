@@ -40,7 +40,11 @@ defmodule Ton.Bitstring do
     end
   end
 
-  def get_bit(%__MODULE__{array: array}, bit_number) do
+  def get_bit(%__MODULE__{array: array, length: length}, bit_number) do
+    if bit_number > length do
+      raise "BitString overflow"
+    end
+
     idx = div(bit_number, 8) ||| 0
     byte = Enum.at(array, idx)
 

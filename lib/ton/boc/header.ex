@@ -1,6 +1,8 @@
 defmodule Ton.Boc.Header do
   import Bitwise
 
+  alias Ton.Utils
+
   defstruct [
     :has_idx,
     :hash_crc32,
@@ -76,10 +78,10 @@ defmodule Ton.Boc.Header do
 
     <<offset_bytes::8, serialized_boc::binary>> = serialized_boc
 
-    {cells_num, serialized_boc} = read_n_bytes_uint(serialized_boc, size_bytes)
-    {roots_num, serialized_boc} = read_n_bytes_uint(serialized_boc, size_bytes)
-    {absent_num, serialized_boc} = read_n_bytes_uint(serialized_boc, size_bytes)
-    {tot_cells_size, serialized_boc} = read_n_bytes_uint(serialized_boc, offset_bytes)
+    {cells_num, serialized_boc} = Utils.read_n_bytes_uint(serialized_boc, size_bytes)
+    {roots_num, serialized_boc} = Utils.read_n_bytes_uint(serialized_boc, size_bytes)
+    {absent_num, serialized_boc} = Utils.read_n_bytes_uint(serialized_boc, size_bytes)
+    {tot_cells_size, serialized_boc} = Utils.read_n_bytes_uint(serialized_boc, offset_bytes)
 
     if byte_size(serialized_boc) < roots_num * size_bytes do
       # TODO: handle gracefully
@@ -89,7 +91,7 @@ defmodule Ton.Boc.Header do
     {reversed_root_list, serialized_boc} =
       Enum.reduce(1..roots_num, {[], serialized_boc}, fn _,
                                                          {root_list_acc, current_serialized_boc} ->
-        {root, serialized_boc} = read_n_bytes_uint(current_serialized_boc, size_bytes)
+        {root, serialized_boc} = Utils.read_n_bytes_uint(current_serialized_boc, size_bytes)
         {[root | root_list_acc], serialized_boc}
       end)
 
@@ -103,7 +105,7 @@ defmodule Ton.Boc.Header do
           Enum.reduce(1..cells_num, {[], serialized_boc}, fn _,
                                                              {cells_list_acc,
                                                               current_serialized_boc} ->
-            {index, serialized_boc} = read_n_bytes_uint(current_serialized_boc, size_bytes)
+            {index, serialized_boc} = Utils.read_n_bytes_uint(current_serialized_boc, size_bytes)
             {[index | cells_list_acc], serialized_boc}
           end)
         end
@@ -160,18 +162,5 @@ defmodule Ton.Boc.Header do
       index: index,
       cells_data: cells_data
     }
-  end
-
-  defp read_n_bytes_uint(binary_data, n) do
-    <<prefix::binary-size(n), tail::binary>> = binary_data
-
-    result =
-      prefix
-      |> :binary.bin_to_list()
-      |> Enum.reduce(0, fn byte, acc ->
-        acc * 256 + byte
-      end)
-
-    {result, tail}
   end
 end
