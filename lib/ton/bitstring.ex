@@ -22,8 +22,8 @@ defmodule Ton.Bitstring do
       bitstring
     else
       {bitstring, found_end_bit} =
-        Enum.reduce_while(0..6, {cursor, false}, fn _bit, {cursor, found_end_bit} ->
-          cursor = cursor - 1
+        Enum.reduce_while(0..6, {bitstring, false}, fn _bit, {bitstring, found_end_bit} ->
+          cursor = bitstring.cursor - 1
 
           if get_bit(bitstring, cursor) do
             {:halt, {off_bit(bitstring, cursor), true}}
@@ -41,7 +41,7 @@ defmodule Ton.Bitstring do
   end
 
   def get_bit(%__MODULE__{array: array}, bit_number) do
-    idx = bit_number / 8 ||| 0
+    idx = div(bit_number, 8) ||| 0
     byte = Enum.at(array, idx)
 
     (byte &&& 1 <<< (7 - rem(bit_number, 8))) > 0
@@ -52,7 +52,7 @@ defmodule Ton.Bitstring do
       raise "BitString overflow"
     end
 
-    idx = bit_number / 8 ||| 0
+    idx = div(bit_number, 8) ||| 0
     byte = Enum.at(array, idx)
 
     array = List.replace_at(array, idx, byte &&& ~~~(1 <<< (7 - rem(bit_number, 8))))
