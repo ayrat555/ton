@@ -1,6 +1,4 @@
 defmodule Ton.Utils do
-  import Bitwise
-
   def read_n_bytes_uint(binary_data, n) do
     <<prefix::binary-size(n), tail::binary>> = binary_data
 
