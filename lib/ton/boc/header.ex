@@ -132,13 +132,9 @@ defmodule Ton.Boc.Header do
         <<binary_data_without_hash::binary-size(binary_data_size - 4),
           expected_hashsum::binary-size(4)>> = binary_data
 
-        IO.inspect(expected_hashsum)
-
-        Utils.crc32c(binary_data_without_hash) |> IO.inspect()
-
-        # if Crc32c.calc(binary_data_without_hash) != expected_hashsum do
-        #   raise "crc32c hashsum mismatch"
-        # end
+        if EvilCrc32c.calc!(binary_data_without_hash) != expected_hashsum do
+          raise "crc32c hashsum mismatch"
+        end
 
         <<_offset_bytes::binary-size(4), serialized_boc::binary>> = serialized_boc
 
