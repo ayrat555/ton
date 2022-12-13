@@ -30,4 +30,18 @@ defmodule Ton.BitstringTest do
       assert Enum.count(array) == 128
     end
   end
+
+  describe "write_uint/3" do
+    test "write 32 bit uint" do
+      bitstring = Bitstring.new()
+
+      assert %Ton.Bitstring{
+               length: 1023,
+               array: array,
+               cursor: 32
+             } = Bitstring.write_uint(bitstring, 42, 32)
+
+      assert 42 == Enum.at(array, 3)
+    end
+  end
 end

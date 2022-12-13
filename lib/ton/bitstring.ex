@@ -133,7 +133,7 @@ defmodule Ton.Bitstring do
     idx = div(bit_number, 8) ||| 0
     byte = Enum.at(array, idx)
 
-    array = List.replace_at(array, idx, byte &&& 1 <<< (7 - rem(bit_number, 8)))
+    array = List.replace_at(array, idx, byte ||| 1 <<< (7 - rem(bit_number, 8)))
 
     %{bitstring | array: array}
   end
