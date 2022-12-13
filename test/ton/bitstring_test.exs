@@ -18,4 +18,16 @@ defmodule Ton.BitstringTest do
                Bitstring.set_top_upped_array(data, false)
     end
   end
+
+  describe "new/1" do
+    test "creates a new bitstring" do
+      assert %Bitstring{
+               length: 1023,
+               array: array,
+               cursor: 0
+             } = Bitstring.new()
+
+      assert Enum.count(array) == 128
+    end
+  end
 end

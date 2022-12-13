@@ -7,8 +7,8 @@ defmodule Ton.Bitstring do
     :cursor
   ]
 
-  def new(length) do
-    size = Float.ceil(length / 2.0) |> trunc()
+  def new(length \\ 1023) do
+    size = Float.ceil(length / 8.0) |> trunc()
     array = List.duplicate(0, size)
 
     %__MODULE__{
@@ -43,8 +43,9 @@ defmodule Ton.Bitstring do
       true ->
         str_value
         |> pad(bit_length)
-        |> Enum.reduce(bitstring, fn bit_char, bitstring ->
-          write_bit(bitstring, bit_char == "1")
+        |> String.graphemes()
+        |> Enum.reduce(bitstring, fn bit_char, acc ->
+          write_bit(acc, bit_char == "1")
         end)
     end
   end
