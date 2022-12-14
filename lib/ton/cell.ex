@@ -6,6 +6,16 @@ defmodule Ton.Cell do
   alias Ton.Bitstring
   alias Ton.Utils
 
+  def new(kind \\ :ordinary, data \\ nil) do
+    data = data || Bitstring.new(1023)
+
+    %__MODULE__{
+      data: data,
+      kind: kind,
+      refs: []
+    }
+  end
+
   def parse(binary_data, reference_index_size) do
     if byte_size(binary_data) < 2 do
       raise "Not enough bytes to encode cell descriptors"
