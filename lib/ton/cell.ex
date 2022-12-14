@@ -52,7 +52,7 @@ defmodule Ton.Cell do
 
     <<data::binary-size(data_byte_size), cell_data::binary>> = cell_data
 
-    bits = Bitstring.set_top_upped_array(data, fullfilled_bytes)
+    bits = Bitstring.set_top_upped_array(Bitstring.new(), data, fullfilled_bytes)
 
     {reversed_refs, residue} =
       if ref_num != 0 do
@@ -96,7 +96,7 @@ defmodule Ton.Cell do
   def data_with_descriptors(cell) do
     d1 = refs_descriptor(cell)
     d2 = bits_descriptor(cell)
-    tu_bits = Bitstring.get_top_upped_array(cell.bitstring)
+    tu_bits = Bitstring.get_top_upped_array(cell.data)
 
     d1 <> d2 <> tu_bits
   end

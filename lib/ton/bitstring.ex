@@ -74,10 +74,22 @@ defmodule Ton.Bitstring do
     %{bitstring | cursor: cursor + 1}
   end
 
-  def set_top_upped_array(binary_data, fullfilled_bytes \\ true) do
+  def set_top_upped_array(
+        %__MODULE__{array: initial_array},
+        binary_data,
+        fullfilled_bytes \\ true
+      ) do
     length = byte_size(binary_data) * 8
-    array = :binary.bin_to_list(binary_data)
+
     cursor = length
+
+    array =
+      binary_data
+      |> :binary.bin_to_list()
+      |> Enum.with_index()
+      |> Enum.reduce(initial_array, fn {byte, index}, acc ->
+        List.replace_at(acc, index, byte)
+      end)
 
     bitstring = %__MODULE__{
       length: length,
@@ -108,7 +120,7 @@ defmodule Ton.Bitstring do
   end
 
   def get_top_upped_array(bitstring) do
-    top_up = (Float.ceil(bitstring.cursor / 0.8) |> trunc) * 8 - bitstring.cursor
+    top_up = (Float.ceil(bitstring.cursor / 8.0) |> trunc) * 8 - bitstring.cursor
 
     bitstring =
       if top_up > 0 do
@@ -122,7 +134,7 @@ defmodule Ton.Bitstring do
       end
 
     last_idx = Float.ceil(bitstring.cursor / 8.0) |> trunc()
-    {result, _} = Enum.split(bitstring.data, last_idx)
+    {result, _} = Enum.split(bitstring.array, last_idx)
 
     :binary.list_to_bin(result)
   end
