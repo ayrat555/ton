@@ -2,11 +2,6 @@ defmodule Ton.Boc do
   alias Ton.Boc.Header
   alias Ton.Cell
 
-  defstruct [
-    :header,
-    :cells
-  ]
-
   def parse(binary_data) do
     header = Header.parse(binary_data)
 
@@ -20,9 +15,31 @@ defmodule Ton.Boc do
 
     cells = Enum.reverse(reversed_cells)
 
-    %__MODULE__{
-      header: header,
-      cells: cells
-    }
+    cells
+    |> Enum.with_index()
+    |> Enum.each(fn {cell, index} ->
+      Enum.each(cell.refs, fn ref ->
+        if ref < index do
+          raise "Topological order is broken"
+        end
+      end)
+    end)
+
+    Enum.map(header.root_list, fn root_idx ->
+      cells
+      |> Enum.at(root_idx)
+      |> populate_refs(cells)
+    end)
+  end
+
+  defp populate_refs(cell, cells) do
+    ref_cells =
+      Enum.map(cell.refs, fn ref ->
+        cells
+        |> Enum.at(ref)
+        |> populate_refs(cells)
+      end)
+
+    %{cell | refs: ref_cells}
   end
 end
