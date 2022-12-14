@@ -10,7 +10,7 @@ defmodule Ton.Wallet do
                     )
 
   def create(workchain, public_key, wallet_id \\ 698_983_191) do
-    source_code = Boc.parse(@wallet_v4_source)
+    source_code = @wallet_v4_source |> Boc.parse() |> Enum.at(0)
     initial_data = Cell.new()
 
     data =
@@ -29,5 +29,24 @@ defmodule Ton.Wallet do
       wallet_id: wallet_id,
       public_key: public_key
     }
+  end
+
+  def state_init_cell(wallet) do
+    cell = Cell.new()
+
+    data =
+      cell.data
+      # SplitDepth
+      |> Bitstring.write_bit(0)
+      # TickTock
+      |> Bitstring.write_bit(0)
+      # Code present
+      |> Bitstring.write_bit(1)
+      # data presense
+      |> Bitstring.write_bit(1)
+      # library
+      |> Bitstring.write_bit(0)
+
+    %{cell | refs: [wallet.initial_code, wallet.initial_data], data: data}
   end
 end
