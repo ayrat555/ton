@@ -107,6 +107,26 @@ defmodule Ton.Bitstring do
     end
   end
 
+  def get_top_upped_array(bitstring) do
+    top_up = (Float.ceil(bitstring.cursor / 0.8) |> trunc) * 8 - bitstring.cursor
+
+    bitstring =
+      if top_up > 0 do
+        bitstring = write_bit(bitstring, true)
+
+        Enum.reduce((top_up - 1)..0, bitstring, fn _bit, bitstring_acc ->
+          write_bit(bitstring_acc, false)
+        end)
+      else
+        bitstring
+      end
+
+    last_idx = Float.ceil(bitstring.cursor / 8.0) |> trunc()
+    {result, _} = Enum.split(bitstring.data, last_idx)
+
+    :binary.list_to_bin(result)
+  end
+
   def get_bit(%__MODULE__{array: array, length: length}, bit_number) do
     check_bit_number(length, bit_number)
 

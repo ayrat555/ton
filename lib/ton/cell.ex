@@ -71,6 +71,66 @@ defmodule Ton.Cell do
     {%__MODULE__{refs: refs, data: bits, kind: kind}, residue}
   end
 
+  def hash(cell) do
+    cell
+    |> binary_repr()
+    |> ExKeccak.hash_256()
+  end
+
+  def binary_repr(cell) do
+    data = data_with_descriptors(cell)
+
+    data =
+      Enum.reduce(cell.refs, data, fn ref_cell, acc ->
+        max_depth_bin = max_depth_as_bin(ref_cell)
+        acc <> max_depth_bin
+      end)
+
+    Enum.reduce(cell.refs, data, fn ref_cell, acc ->
+      hash = hash(ref_cell)
+
+      acc <> hash
+    end)
+  end
+
+  def data_with_descriptors(cell) do
+    d1 = refs_descriptor(cell)
+    d2 = bits_descriptor(cell)
+    tu_bits = Bitstring.get_top_upped_array(cell.bitstring)
+
+    d1 <> d2 <> tu_bits
+  end
+
+  def refs_descriptor(cell) do
+    # TODO: different for exotic cells
+    <<Enum.count(cell.refs)>>
+  end
+
+  def bits_descriptor(cell) do
+    # TODO: different for exotic cells
+
+    len = cell.data.cursor
+
+    ceil = Float.ceil(len / 8.0) |> trunc()
+    floor = Float.ceil(len / 8.0) |> trunc()
+
+    <<ceil + floor>>
+  end
+
+  def max_level(_cell) do
+    # TODO: different for exotic cells
+    0
+  end
+
+  def max_depth_as_bin(cell) do
+    max_depth = max_depth(cell)
+
+    d1 = rem(max_depth, 256)
+    d2 = Float.floor(max_depth / 256.0)
+
+    <<d1, d2>>
+  end
+
   def max_depth(refs, depth \\ 0)
 
   def max_depth(%__MODULE__{refs: []}, depth), do: depth
