@@ -51,4 +51,14 @@ defmodule Ton.WalletTest do
                0>> = :binary.list_to_bin(cell.data.array)
     end
   end
+
+  describe "hash/1" do
+    test "calculates wallet hash", %{keypair: keypair} do
+      wallet = Wallet.create(0, keypair.public_key)
+
+      assert <<152, 69, 28, 126, 122, 255, 209, 6, 184, 5, 55, 193, 40, 226, 165, 201, 71, 146,
+               159, 160, 130, 120, 77, 110, 37, 145, 64, 146, 161, 86, 252,
+               113>> = Wallet.hash(wallet)
+    end
+  end
 end

@@ -126,7 +126,7 @@ defmodule Ton.Cell do
     max_depth = max_depth(cell)
 
     d1 = rem(max_depth, 256)
-    d2 = Float.floor(max_depth / 256.0)
+    d2 = Float.floor(max_depth / 256.0) |> trunc()
 
     <<d1, d2>>
   end
