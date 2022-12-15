@@ -11,4 +11,10 @@ defmodule Ton.Utils do
 
     {result, tail}
   end
+
+  def sha256(binary_data) do
+    :sha256
+    |> :crypto.hash(binary_data)
+    |> Base.encode16(case: :lower)
+  end
 end

@@ -74,7 +74,7 @@ defmodule Ton.Cell do
   def hash(cell) do
     cell
     |> binary_repr()
-    |> ExKeccak.hash_256()
+    |> Utils.sha256()
   end
 
   def binary_repr(cell) do
