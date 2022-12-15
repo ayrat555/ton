@@ -49,4 +49,10 @@ defmodule Ton.Wallet do
 
     %{cell | refs: [wallet.initial_code, wallet.initial_data], data: data}
   end
+
+  def hash(wallet) do
+    wallet
+    |> state_init_cell()
+    |> Cell.hash()
+  end
 end

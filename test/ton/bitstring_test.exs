@@ -14,7 +14,7 @@ defmodule Ton.BitstringTest do
     test "sets the passe" do
       data = <<1, 2, 3, 4, 5, 6, 7, 8>>
 
-      assert %Ton.Bitstring{array: [1, 2, 3, 4, 5, 6, 7, 0], cursor: 61, length: 64} =
+      assert %Ton.Bitstring{array: [1, 2, 3, 4, 5, 6, 7, 0], cursor: 60, length: 64} =
                Bitstring.set_top_upped_array(data, false)
     end
   end

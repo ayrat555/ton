@@ -74,10 +74,17 @@ defmodule Ton.Bitstring do
     %{bitstring | cursor: cursor + 1}
   end
 
-  def set_top_upped_array(binary_data, fullfilled_bytes \\ true) do
+  def set_top_upped_array(
+        binary_data,
+        fullfilled_bytes \\ true
+      ) do
     length = byte_size(binary_data) * 8
-    array = :binary.bin_to_list(binary_data)
+
     cursor = length
+
+    array =
+      binary_data
+      |> :binary.bin_to_list()
 
     bitstring = %__MODULE__{
       length: length,
@@ -90,12 +97,12 @@ defmodule Ton.Bitstring do
     else
       {bitstring, found_end_bit} =
         Enum.reduce_while(0..6, {bitstring, false}, fn _bit, {bitstring, found_end_bit} ->
-          cursor = bitstring.cursor - 1
+          bitstring = %{bitstring | cursor: bitstring.cursor - 1}
 
-          if get_bit(bitstring, cursor) do
-            {:halt, {off_bit(bitstring, cursor), true}}
+          if get_bit(bitstring, bitstring.cursor) do
+            {:halt, {off_bit(bitstring, bitstring.cursor), true}}
           else
-            {:cont, {%{bitstring | cursor: cursor}, found_end_bit}}
+            {:cont, {bitstring, found_end_bit}}
           end
         end)
 
@@ -105,6 +112,28 @@ defmodule Ton.Bitstring do
 
       bitstring
     end
+  end
+
+  def get_top_upped_array(bitstring) do
+    top_up = (Float.ceil(bitstring.cursor / 8.0) |> trunc) * 8 - bitstring.cursor
+
+    bitstring =
+      if top_up > 0 do
+        bitstring = write_bit(bitstring, true)
+
+        Enum.reduce((top_up - 2)..0, bitstring, fn _bit, bitstring_acc ->
+          bitstring = write_bit(bitstring_acc, false)
+
+          bitstring
+        end)
+      else
+        bitstring
+      end
+
+    last_idx = Float.ceil(bitstring.cursor / 8.0) |> trunc()
+    {result, _} = Enum.split(bitstring.array, last_idx)
+
+    :binary.list_to_bin(result)
   end
 
   def get_bit(%__MODULE__{array: array, length: length}, bit_number) do
