@@ -32,7 +32,7 @@ defmodule Ton.Cell do
       raise "Not enough bytes to encode cell data"
     end
 
-    {kind, cell_data} =
+    {kind, data_byte_size, cell_data} =
       if is_exotic do
         <<kind_byte::8, cell_data::binary>> = cell_data
 
@@ -45,14 +45,14 @@ defmodule Ton.Cell do
             _ -> raise "Invalid cell type: #{kind_byte}"
           end
 
-        {kind, cell_data}
+        {kind, data_byte_size - 1, cell_data}
       else
-        {:ordinary, cell_data}
+        {:ordinary, data_byte_size, cell_data}
       end
 
     <<data::binary-size(data_byte_size), cell_data::binary>> = cell_data
 
-    bits = Bitstring.set_top_upped_array(Bitstring.new(), data, fullfilled_bytes)
+    bits = Bitstring.set_top_upped_array(data, fullfilled_bytes)
 
     {reversed_refs, residue} =
       if ref_num != 0 do
@@ -96,6 +96,7 @@ defmodule Ton.Cell do
   def data_with_descriptors(cell) do
     d1 = refs_descriptor(cell)
     d2 = bits_descriptor(cell)
+
     tu_bits = Bitstring.get_top_upped_array(cell.data)
 
     d1 <> d2 <> tu_bits
@@ -112,7 +113,7 @@ defmodule Ton.Cell do
     len = cell.data.cursor
 
     ceil = Float.ceil(len / 8.0) |> trunc()
-    floor = Float.ceil(len / 8.0) |> trunc()
+    floor = Float.floor(len / 8.0) |> trunc()
 
     <<ceil + floor>>
   end
