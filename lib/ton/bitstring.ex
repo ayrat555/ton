@@ -121,8 +121,10 @@ defmodule Ton.Bitstring do
       if top_up > 0 do
         bitstring = write_bit(bitstring, true)
 
-        Enum.reduce((top_up - 1)..0, bitstring, fn _bit, bitstring_acc ->
-          write_bit(bitstring_acc, false)
+        Enum.reduce((top_up - 2)..0, bitstring, fn _bit, bitstring_acc ->
+          bitstring = write_bit(bitstring_acc, false)
+
+          bitstring
         end)
       else
         bitstring

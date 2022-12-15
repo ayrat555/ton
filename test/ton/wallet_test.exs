@@ -58,7 +58,7 @@ defmodule Ton.WalletTest do
 
       assert <<152, 69, 28, 126, 122, 255, 209, 6, 184, 5, 55, 193, 40, 226, 165, 201, 71, 146,
                159, 160, 130, 120, 77, 110, 37, 145, 64, 146, 161, 86, 252,
-               113>> = Wallet.hash(wallet)
+               113>> = Wallet.hash(wallet) |> Base.encode16(case: :lower)
     end
   end
 end

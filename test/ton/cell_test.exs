@@ -1,6 +1,7 @@
 defmodule Ton.CellTest do
   use ExUnit.Case
 
+  alias Ton.Bitstring
   alias Ton.Boc
   alias Ton.Cell
 
@@ -220,5 +221,54 @@ defmodule Ton.CellTest do
 
       assert "d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c" == Cell.hash(cell)
     end
+
+    test "calculate cell hash for cell with refs" do
+      nested_cell = %Cell{
+        data: %Bitstring{
+          array:
+            hex_to_list(
+              "d001d0d3032171b0925f04e022d749c120925f04e002d31f218210706c7567bd22821064737472bdb0925f05e003fa403020fa4401c8ca07cbffc9d0ed44d0810140d721f404305c810108f40a6fa131b3925f07e005d33fc8258210706c7567ba923830e30d03821064737472ba925f06e30d"
+            ),
+          cursor: 920,
+          length: 920
+        },
+        kind: :ordinary,
+        refs: [
+          %Cell{
+            data: %Bitstring{
+              array:
+                hex_to_list(
+                  "01fa00f40430f8276f2230500aa121bef2e0508210706c7567831eb17080185004cb0526cf1658fa0219f400cb6917cb1f5260cb3f20c98040fb0006"
+                ),
+              cursor: 480,
+              length: 480
+            },
+            kind: :ordinary,
+            refs: []
+          },
+          %Cell{
+            data: %Bitstring{
+              array:
+                hex_to_list(
+                  "5004810108f45930ed44d0810140d720c801cf16f400c9ed540172b08e23821064737472831eb17080185005cb055003cf1623fa0213cb6acb1fcb3fc98040fb00925f03e2"
+                ),
+              cursor: 552,
+              length: 552
+            },
+            kind: :ordinary,
+            refs: []
+          }
+        ]
+      }
+
+      assert "aceb86285d6598f29c2ed99f2ce24228cb752a0ac3a58ae4d5191c5fcb989c91" ==
+               Cell.hash(nested_cell) |> Base.encode16(case: :lower)
+    end
+  end
+
+  defp hex_to_list(hex_string) do
+    hex_string
+    |> Base.decode16!(case: :lower)
+    |> :binary.bin_to_list()
   end
 end

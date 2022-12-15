@@ -72,9 +72,14 @@ defmodule Ton.Cell do
   end
 
   def hash(cell) do
-    cell
-    |> binary_repr()
-    |> Utils.sha256()
+    hash =
+      cell
+      |> binary_repr()
+      |> Utils.sha256()
+
+    IO.inspect(Base.encode16(hash, case: :lower))
+
+    hash
   end
 
   def binary_repr(cell) do
@@ -86,11 +91,14 @@ defmodule Ton.Cell do
         acc <> max_depth_bin
       end)
 
-    Enum.reduce(cell.refs, data, fn ref_cell, acc ->
-      hash = hash(ref_cell)
+    result =
+      Enum.reduce(cell.refs, data, fn ref_cell, acc ->
+        hash = hash(ref_cell)
 
-      acc <> hash
-    end)
+        acc <> hash
+      end)
+
+    result
   end
 
   def data_with_descriptors(cell) do
@@ -132,20 +140,22 @@ defmodule Ton.Cell do
     <<d1, d2>>
   end
 
-  def max_depth(refs, depth \\ 0)
+  def max_depth(refs)
 
-  def max_depth(%__MODULE__{refs: []}, depth), do: depth
+  def max_depth(%__MODULE__{refs: []}), do: 0
 
-  def max_depth(%__MODULE__{refs: [cell | cell_tail]}, depth) do
-    current_cell_depth = max_depth(cell)
+  def max_depth(%__MODULE__{refs: cells}) do
+    result =
+      Enum.reduce(cells, 0, fn ref_cell, acc ->
+        current_cell_depth = max_depth(ref_cell)
 
-    depth =
-      if current_cell_depth > depth do
-        current_cell_depth + 1
-      else
-        depth
-      end
+        if current_cell_depth > acc do
+          current_cell_depth
+        else
+          acc
+        end
+      end)
 
-    max_depth(%__MODULE__{refs: cell_tail}, depth)
+    result + 1
   end
 end
