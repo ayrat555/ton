@@ -56,9 +56,8 @@ defmodule Ton.WalletTest do
     test "calculates wallet hash", %{keypair: keypair} do
       wallet = Wallet.create(0, keypair.public_key)
 
-      assert <<152, 69, 28, 126, 122, 255, 209, 6, 184, 5, 55, 193, 40, 226, 165, 201, 71, 146,
-               159, 160, 130, 120, 77, 110, 37, 145, 64, 146, 161, 86, 252,
-               113>> = Wallet.hash(wallet) |> Base.encode16(case: :lower)
+      assert "8020100d41e417e941e6460c47191e38a142fb54e404f6fe1dc6695adb72a98c" =
+               Wallet.hash(wallet) |> Base.encode16(case: :lower)
     end
   end
 end

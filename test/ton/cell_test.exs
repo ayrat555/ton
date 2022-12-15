@@ -54,156 +54,156 @@ defmodule Ton.CellTest do
 
       assert [
                %Ton.Cell{
-                 refs: [1],
                  data: %Ton.Bitstring{
-                   length: 80,
                    array: [255, 0, 244, 164, 19, 244, 188, 242, 200, 11],
-                   cursor: 80
+                   cursor: 80,
+                   length: 80
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: [1]
                },
                %Ton.Cell{
-                 refs: [2, 3],
-                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
-                 kind: :ordinary
+                 data: %Ton.Bitstring{array: [0], cursor: 2, length: 8},
+                 kind: :ordinary,
+                 refs: [2, 3]
                },
                %Ton.Cell{
-                 refs: [4, 5],
-                 data: %Ton.Bitstring{length: 8, array: [64], cursor: 5},
-                 kind: :ordinary
+                 data: %Ton.Bitstring{array: '@', cursor: 4, length: 8},
+                 kind: :ordinary,
+                 refs: [4, 5]
                },
                %Ton.Cell{
-                 refs: [16, 17, 18, 19],
                  data: %Ton.Bitstring{
-                   length: 992,
                    array: _,
-                   cursor: 992
+                   cursor: 992,
+                   length: 992
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: [16, 17, 18, 19]
                },
                %Ton.Cell{
-                 refs: [6, 7],
                  data: %Ton.Bitstring{
-                   length: 920,
                    array: _,
-                   cursor: 920
+                   cursor: 920,
+                   length: 920
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: [6, 7]
                },
                %Ton.Cell{
-                 refs: [8, 9],
-                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
-                 kind: :ordinary
+                 data: %Ton.Bitstring{array: [0], cursor: 2, length: 8},
+                 kind: :ordinary,
+                 refs: '\b\t'
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 480,
                    array: _,
-                   cursor: 480
+                   cursor: 480,
+                   length: 480
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 552,
                    array: _,
-                   cursor: 552
+                   cursor: 552,
+                   length: 552
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [10, 11],
-                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
-                 kind: :ordinary
+                 data: %Ton.Bitstring{array: [0], cursor: 2, length: 8},
+                 kind: :ordinary,
+                 refs: '\n\v'
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 360,
                    array: _,
-                   cursor: 358
+                   cursor: 357,
+                   length: 360
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [12, 13],
-                 data: %Ton.Bitstring{length: 8, array: [80], cursor: 5},
-                 kind: :ordinary
+                 data: %Ton.Bitstring{array: 'P', cursor: 4, length: 8},
+                 kind: :ordinary,
+                 refs: '\f\r'
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 72,
                    array: [184, 201, 126, 212, 77, 13, 112, 177, 240],
-                   cursor: 69
+                   cursor: 68,
+                   length: 72
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 248,
                    array: _,
-                   cursor: 243
+                   cursor: 242,
+                   length: 248
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [14, 15],
-                 data: %Ton.Bitstring{length: 8, array: [0], cursor: 3},
-                 kind: :ordinary
+                 data: %Ton.Bitstring{array: [0], cursor: 2, length: 8},
+                 kind: :ordinary,
+                 refs: [14, 15]
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 104,
                    array: [173, 206, 118, 162, 104, 64, 32, 107, 144, 235, 133, 255, 128],
-                   cursor: 98
+                   cursor: 97,
+                   length: 104
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 104,
                    array: [175, 29, 246, 162, 104, 64, 16, 107, 144, 235, 133, 143, 128],
-                   cursor: 98
+                   cursor: 97,
+                   length: 104
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 440,
                    array: _,
-                   cursor: 440
+                   cursor: 440,
+                   length: 440
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 448,
                    array: _,
-                   cursor: 448
+                   cursor: 448,
+                   length: 448
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [],
                  data: %Ton.Bitstring{
-                   length: 432,
                    array: _,
-                   cursor: 432
+                   cursor: 432,
+                   length: 432
                  },
-                 kind: :ordinary
+                 kind: :ordinary,
+                 refs: []
                },
                %Ton.Cell{
-                 refs: [],
-                 data: %Ton.Bitstring{length: 40, array: [244, 0, 201, 237, 84], cursor: 40},
-                 kind: :ordinary
+                 data: %Ton.Bitstring{array: [244, 0, 201, 237, 84], cursor: 40, length: 40},
+                 kind: :ordinary,
+                 refs: []
                }
              ] = Enum.reverse(reversed_cells)
     end
@@ -219,10 +219,11 @@ defmodule Ton.CellTest do
 
       [cell] = Boc.parse(contract_source_code)
 
-      assert "d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c" == Cell.hash(cell)
+      assert "d4902fcc9fad74698fa8e353220a68da0dcf72e32bcb2eb9ee04217c17d3062c" ==
+               Cell.hash(cell) |> Base.encode16(case: :lower)
     end
 
-    test "calculate cell hash for cell with refs" do
+    test "calculates cell hash for cell with refs" do
       nested_cell = %Cell{
         data: %Bitstring{
           array:
@@ -263,6 +264,83 @@ defmodule Ton.CellTest do
 
       assert "aceb86285d6598f29c2ed99f2ce24228cb752a0ac3a58ae4d5191c5fcb989c91" ==
                Cell.hash(nested_cell) |> Base.encode16(case: :lower)
+    end
+
+    test "calculates cell hash for cell with 2 level refs" do
+      cell = %Cell{
+        refs: [
+          %Cell{
+            refs: [],
+            data: %Bitstring{
+              length: 248,
+              array: [
+                178,
+                157,
+                251,
+                81,
+                52,
+                32,
+                64,
+                80,
+                53,
+                200,
+                125,
+                1,
+                12,
+                0,
+                178,
+                50,
+                129,
+                242,
+                255,
+                242,
+                116,
+                0,
+                96,
+                64,
+                66,
+                61,
+                2,
+                155,
+                232,
+                76,
+                64
+              ],
+              cursor: 242
+            },
+            kind: :ordinary
+          },
+          %Cell{
+            refs: [
+              %Cell{
+                refs: [],
+                data: %Bitstring{
+                  length: 104,
+                  array: [173, 206, 118, 162, 104, 64, 32, 107, 144, 235, 133, 255, 128],
+                  cursor: 97
+                },
+                kind: :ordinary
+              },
+              %Cell{
+                refs: [],
+                data: %Bitstring{
+                  length: 104,
+                  array: [175, 29, 246, 162, 104, 64, 16, 107, 144, 235, 133, 143, 128],
+                  cursor: 97
+                },
+                kind: :ordinary
+              }
+            ],
+            data: %Bitstring{length: 8, array: [0], cursor: 2},
+            kind: :ordinary
+          }
+        ],
+        data: %Bitstring{length: 8, array: [80], cursor: 4},
+        kind: :ordinary
+      }
+
+      assert "050ff76bdca185d0dce2781ff13bfe352a3efc1a8e1276a6ac5bc38ba4b3d67e" ==
+               Cell.hash(cell) |> Base.encode16(case: :lower)
     end
   end
 

@@ -10,15 +10,10 @@ defmodule Ton.Boc do
                                                                    {cell_acc, remaining_data} ->
         {cell, remaining_data} = Cell.parse(remaining_data, header.size_bytes)
 
-        {Base.encode16(:binary.list_to_bin(cell.data.array), case: :lower), cell.data.cursor}
-        |> IO.inspect()
-
         {[cell | cell_acc], remaining_data}
       end)
 
     cells = Enum.reverse(reversed_cells)
-
-    IO.inspect(Enum.count(cells))
 
     cells
     |> Enum.with_index()

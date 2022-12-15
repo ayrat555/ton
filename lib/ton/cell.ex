@@ -72,14 +72,9 @@ defmodule Ton.Cell do
   end
 
   def hash(cell) do
-    hash =
-      cell
-      |> binary_repr()
-      |> Utils.sha256()
-
-    IO.inspect(Base.encode16(hash, case: :lower))
-
-    hash
+    cell
+    |> binary_repr()
+    |> Utils.sha256()
   end
 
   def binary_repr(cell) do
@@ -137,7 +132,7 @@ defmodule Ton.Cell do
     d1 = rem(max_depth, 256)
     d2 = Float.floor(max_depth / 256.0) |> trunc()
 
-    <<d1, d2>>
+    <<d2, d1>>
   end
 
   def max_depth(refs)

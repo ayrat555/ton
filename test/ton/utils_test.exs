@@ -18,7 +18,7 @@ defmodule Ton.UtilsTest do
       ]
 
       for %{value: value, output: output} <- tests do
-        assert Utils.sha256(value) == output
+        assert value |> Utils.sha256() |> Base.encode16(case: :lower) == output
       end
     end
   end
