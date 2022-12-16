@@ -2,6 +2,7 @@ defmodule Ton.Wallet do
   alias Ton.Bitstring
   alias Ton.Boc
   alias Ton.Cell
+  alias Ton.Crc16
 
   defstruct [:initial_code, :initial_data, :workchain, :wallet_id, :public_key]
 
@@ -12,6 +13,8 @@ defmodule Ton.Wallet do
   @bounceable_tag 0x11
   @non_bounceable_tag 0x51
   @test_flag 0x80
+
+  import Bitwise
 
   def create(workchain, public_key, wallet_id \\ 698_983_191) do
     source_code = @wallet_v4_source |> Boc.parse() |> Enum.at(0)
@@ -60,9 +63,39 @@ defmodule Ton.Wallet do
     |> Cell.hash()
   end
 
-  def friendly_address(params \\ []) do
+  def friendly_address(wallet, params \\ []) do
     url_safe = Keyword.get(params, :url_safe, true)
     bounceable = Keyword.get(params, :bounceable, true)
     test_only = Keyword.get(params, :test_only, false)
+
+    tag =
+      if bounceable do
+        @bounceable_tag
+      else
+        @non_bounceable_tag
+      end
+
+    tag =
+      if test_only do
+        tag ||| @test_flag
+      else
+        tag
+      end
+
+    hash = hash(wallet)
+
+    address = <<tag, wallet.workchain>> <> hash
+    checksum = Crc16.calc(address)
+
+    address_with_checksum = address <> checksum
+
+    if url_safe do
+      address_with_checksum
+      |> Base.encode64()
+      |> String.replace("+", "-")
+      |> String.replace("/", "_")
+    else
+      Base.encode64(address_with_checksum)
+    end
   end
 end
