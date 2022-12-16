@@ -1,0 +1,13 @@
+[package]
+name = "crc16"
+version = "0.1.0"
+authors = []
+edition = "2018"
+
+[lib]
+name = "crc16"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.26.0"
