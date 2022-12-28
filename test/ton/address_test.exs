@@ -2,6 +2,7 @@ defmodule Ton.AddressTest do
   use ExUnit.Case
 
   alias Ton.Address
+  alias Ton.Wallet
 
   describe "parse/1" do
     test "parses a mainnet address" do
@@ -44,6 +45,27 @@ defmodule Ton.AddressTest do
       address = Base.encode64(<<1, 2, 3, 4, 5>>)
 
       assert {:error, :invalid_length} = Address.parse(address)
+    end
+  end
+
+  describe "friendly_address/2" do
+    test "generates a friendly address" do
+      keypair =
+        Ton.mnemonic_to_keypair(
+          "about about about about about about about about about about about about about about about about about about about about about about about about"
+        )
+
+      wallet = Wallet.create(0, keypair.public_key)
+
+      assert "EQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjP_m" ==
+               Address.friendly_address(wallet, url_safe: true, bounceable: true, test_only: false)
+
+      assert "UQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjKIj" ==
+               Address.friendly_address(wallet,
+                 url_safe: false,
+                 bounceable: false,
+                 test_only: false
+               )
     end
   end
 end

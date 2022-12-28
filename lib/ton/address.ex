@@ -2,6 +2,7 @@ defmodule Ton.Address do
   import Bitwise
 
   alias Ton.Crc16
+  alias Ton.Wallet
 
   @bounceable_tag 0x11
   @non_bounceable_tag 0x51
@@ -23,6 +24,42 @@ defmodule Ton.Address do
 
       {:ok,
        %__MODULE__{test_only: test_only, bounceable: bounceable, workchain: workchain, hash: hash}}
+    end
+  end
+
+  def friendly_address(%Wallet{} = wallet, params \\ []) do
+    url_safe = Keyword.get(params, :url_safe, true)
+    bounceable = Keyword.get(params, :bounceable, true)
+    test_only = Keyword.get(params, :test_only, false)
+
+    tag =
+      if bounceable do
+        @bounceable_tag
+      else
+        @non_bounceable_tag
+      end
+
+    tag =
+      if test_only do
+        tag ||| @test_flag
+      else
+        tag
+      end
+
+    hash = Wallet.hash(wallet)
+
+    address = <<tag, wallet.workchain>> <> hash
+    checksum = Crc16.calc(address)
+
+    address_with_checksum = address <> checksum
+
+    if url_safe do
+      address_with_checksum
+      |> Base.encode64()
+      |> String.replace("+", "-")
+      |> String.replace("/", "_")
+    else
+      Base.encode64(address_with_checksum)
     end
   end
 
