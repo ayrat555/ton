@@ -27,7 +27,10 @@ defmodule Ton.Address do
   end
 
   defp decode_base64(address_str) do
-    case Base.decode64(address_str) do
+    case address_str
+         |> String.replace("-", "+")
+         |> String.replace("_", "/")
+         |> Base.decode64() do
       {:ok, decoded} -> {:ok, decoded}
       _error -> {:error, :invalid_base64}
     end
@@ -46,7 +49,7 @@ defmodule Ton.Address do
 
   def check_tag(tag) do
     {tag, test_only} =
-      if tag &&& @test_flag > 0 do
+      if (tag &&& @test_flag) > 0 do
         tag = Bitwise.bxor(tag, @test_flag)
 
         {tag, true}
