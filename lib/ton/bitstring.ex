@@ -18,6 +18,37 @@ defmodule Ton.Bitstring do
     }
   end
 
+  def write_address(bitstring, nil) do
+    write_uint(bitstring, 0, 4)
+  end
+
+  def write_address(bitstring, address) do
+    bitstring
+    |> write_uint(2, 2)
+    |> write_uint(0, 1)
+    |> write_uint(address.workchain, 8)
+    |> write_binary(address.hash)
+  end
+
+  def write_coins(bitstring, 0) do
+    write_uint(bitstring, 0, 2)
+  end
+
+  def write_coins(bitstring, value) when is_integer(value) do
+    str_value = Integer.to_string(value, 16)
+
+    l =
+      str_value
+      |> String.length()
+      |> Kernel./(2.0)
+      |> Float.ceil()
+      |> trunc()
+
+    bitstring
+    |> write_uint(l, 4)
+    |> write_uint(value, l * 8)
+  end
+
   def write_binary(bitstring, data) do
     data
     |> :binary.bin_to_list()

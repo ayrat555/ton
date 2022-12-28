@@ -60,20 +60,4 @@ defmodule Ton.WalletTest do
                Wallet.hash(wallet) |> Base.encode16(case: :lower)
     end
   end
-
-  describe "friendly_address/2" do
-    test "generates a friendly address", %{keypair: keypair} do
-      wallet = Wallet.create(0, keypair.public_key)
-
-      assert "EQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjP_m" ==
-               Wallet.friendly_address(wallet, url_safe: true, bounceable: true, test_only: false)
-
-      assert "UQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjKIj" ==
-               Wallet.friendly_address(wallet,
-                 url_safe: false,
-                 bounceable: false,
-                 test_only: false
-               )
-    end
-  end
 end
