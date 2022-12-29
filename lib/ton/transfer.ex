@@ -10,17 +10,10 @@ defmodule Ton.Transfer do
     seqno = Keyword.fetch!(params, :seqno)
     value = Keyword.fetch!(params, :value)
     bounce = Keyword.fetch!(params, :bounce)
-
     to = Keyword.fetch!(params, :to)
     wallet_id = Keyword.fetch!(params, :wallet_id)
     send_mode = Keyword.get(params, :send_mode, 3)
-
-    timeout_diff = Keyword.get(params, :timeout, 60)
-
-    timeout =
-      DateTime.utc_now()
-      |> DateTime.add(timeout_diff)
-      |> DateTime.to_unix()
+    timeout = timeout(params)
 
     %__MODULE__{
       seqno: seqno,
@@ -63,11 +56,26 @@ defmodule Ton.Transfer do
 
   def serialize_and_sign(transfer, private_key) do
     transfer_cell = serialize(transfer)
-    {:ok, signature} = transfer_cell |> Cell.hash() |> Utils.sign(private_key)
+
+    signature = transfer_cell |> Cell.hash() |> Utils.sign(private_key)
 
     cell = Cell.new()
     data = Bitstring.write_binary(cell.data, signature)
 
     serialize(transfer, %{cell | data: data})
+  end
+
+  defp timeout(params) do
+    case Keyword.get(params, :epoch_timeout) do
+      nil ->
+        timeout_diff = Keyword.get(params, :timeout, 60)
+
+        DateTime.utc_now()
+        |> DateTime.add(timeout_diff)
+        |> DateTime.to_unix()
+
+      epoch_timeout ->
+        epoch_timeout
+    end
   end
 end
