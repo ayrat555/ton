@@ -19,7 +19,7 @@ defmodule Ton.Bitstring do
   end
 
   def write_address(bitstring, nil) do
-    write_uint(bitstring, 0, 4)
+    write_uint(bitstring, 0, 2)
   end
 
   def write_address(bitstring, address) do
@@ -31,7 +31,7 @@ defmodule Ton.Bitstring do
   end
 
   def write_coins(bitstring, 0) do
-    write_uint(bitstring, 0, 2)
+    write_uint(bitstring, 0, 4)
   end
 
   def write_coins(bitstring, value) when is_integer(value) do

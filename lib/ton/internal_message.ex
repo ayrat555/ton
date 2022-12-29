@@ -25,10 +25,10 @@ defmodule Ton.InternalMessage do
       |> Bitstring.write_bit(internal_message.bounce)
       # bounced
       |> Bitstring.write_bit(false)
-      # to address
-      |> Bitstring.write_address(internal_message.to)
       # from address
       |> Bitstring.write_address(nil)
+      # to address
+      |> Bitstring.write_address(internal_message.to)
       # coins
       |> Bitstring.write_coins(internal_message.value)
       # currency collection not supported
@@ -41,6 +41,10 @@ defmodule Ton.InternalMessage do
       |> Bitstring.write_uint(0, 64)
       # createdAt
       |> Bitstring.write_uint(0, 32)
+      # state init
+      |> Bitstring.write_bit(0)
+      # state body
+      |> Bitstring.write_bit(0)
 
     %{cell | data: data}
   end

@@ -8,12 +8,19 @@ defmodule Ton.Transfer do
 
   def new(params) do
     seqno = Keyword.fetch!(params, :seqno)
-    send_mode = Keyword.fetch!(params, :send_mode)
     value = Keyword.fetch!(params, :value)
     bounce = Keyword.fetch!(params, :bounce)
-    timeout = Keyword.fetch!(params, :timeout)
+
     to = Keyword.fetch!(params, :to)
     wallet_id = Keyword.fetch!(params, :wallet_id)
+    send_mode = Keyword.get(params, :send_mode, 3)
+
+    timeout_diff = Keyword.get(params, :timeout, 60)
+
+    timeout =
+      DateTime.utc_now()
+      |> DateTime.add(timeout_diff)
+      |> DateTime.to_unix()
 
     %__MODULE__{
       seqno: seqno,
