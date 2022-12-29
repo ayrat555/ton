@@ -20,6 +20,8 @@ defmodule Ton.Utils do
   end
 
   def sign(data, private_key) do
-    Ed25519.sign(data, private_key)
+    {:ok, <<signature::binary-size(64), ^data::binary>>} = Ed25519.sign(data, private_key)
+
+    signature
   end
 end
