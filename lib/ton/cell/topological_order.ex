@@ -4,11 +4,10 @@ defmodule Ton.Cell.TopologicalOrder do
   def sort(root_cell) do
     {all_cells, cell_hashes} = flatten_cells([root_cell])
 
-    sorted_hashes = sort(cell_hashes, MapSet.to_list(all_cells))
+    sorted_hashes = sort(cell_hashes, all_cells)
 
     indexes =
-      cell_hashes
-      |> sort(MapSet.to_list(all_cells))
+      sorted_hashes
       |> Enum.with_index()
       |> Map.new()
 
@@ -24,9 +23,11 @@ defmodule Ton.Cell.TopologicalOrder do
     end)
   end
 
-  defp flatten_cells(cells, acc \\ {%{}, MapSet.new()})
+  defp flatten_cells(cells, acc \\ {%{}, []})
 
-  defp flatten_cells([], acc), do: acc
+  defp flatten_cells([], {new_all_cells, new_uniq_hashes}) do
+    {new_all_cells, Enum.reverse(new_uniq_hashes)}
+  end
 
   defp flatten_cells(cells, {all_cells, uniq_hashes}) do
     {new_all_cells, new_uniq_hashes, new_cells_reversed} =
@@ -44,7 +45,7 @@ defmodule Ton.Cell.TopologicalOrder do
 
             cell_wrapper = %{cell: cell, refs: ref_hashes}
             new_all_cells_acc = Map.put(all_cells_acc, hash, cell_wrapper)
-            new_uniq_hashes_acc = MapSet.put(uniq_hashes_acc, hash)
+            new_uniq_hashes_acc = [hash | uniq_hashes_acc]
             new_current_cells_acc = Enum.concat(current_cells_acc, cell.refs)
 
             {new_all_cells_acc, new_uniq_hashes_acc, new_current_cells_acc}
@@ -54,9 +55,7 @@ defmodule Ton.Cell.TopologicalOrder do
         end
       end)
 
-    new_cells = Enum.reverse(new_cells_reversed)
-
-    flatten_cells(new_cells, {new_all_cells, new_uniq_hashes})
+    flatten_cells(new_cells_reversed, {new_all_cells, new_uniq_hashes})
   end
 
   defp sort(hashes, all_cells, temp_mark \\ MapSet.new(), sorted \\ [])
@@ -72,8 +71,6 @@ defmodule Ton.Cell.TopologicalOrder do
 
   defp do_sort(cell_hash, cell_hashes, all_cells, temp_mark, sorted_acc) do
     if Enum.member?(cell_hashes, cell_hash) do
-      {cell_hashes, temp_mark, sorted_acc}
-    else
       if Enum.member?(temp_mark, cell_hash) do
         raise "Not a DAG"
       end
@@ -102,6 +99,8 @@ defmodule Ton.Cell.TopologicalOrder do
         Enum.reject(new_cell_hashes, fn current_cell_hash -> current_cell_hash == cell_hash end)
 
       {cell_hashes, temp_mark, new_sorted_acc}
+    else
+      {cell_hashes, temp_mark, sorted_acc}
     end
   end
 end
