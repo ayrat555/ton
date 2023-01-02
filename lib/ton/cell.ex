@@ -256,4 +256,10 @@ defmodule Ton.Cell do
 
     result + 1
   end
+
+  def write_cell(cell, another_cell) do
+    new_data = Bitstring.write_bistring(cell.data, another_cell.data)
+
+    %{cell | refs: cell.refs ++ another_cell.refs, data: new_data}
+  end
 end

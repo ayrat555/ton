@@ -31,8 +31,8 @@ defmodule Ton.Wallet do
     }
   end
 
-  def state_init_cell(wallet) do
-    cell = Cell.new()
+  def state_init_cell(wallet, cell \\ nil) do
+    cell = cell || Cell.new()
 
     data =
       cell.data
@@ -47,7 +47,7 @@ defmodule Ton.Wallet do
       # library
       |> Bitstring.write_bit(0)
 
-    %{cell | refs: [wallet.initial_code, wallet.initial_data], data: data}
+    %{cell | refs: cell.refs ++ [wallet.initial_code, wallet.initial_data], data: data}
   end
 
   def hash(wallet) do
