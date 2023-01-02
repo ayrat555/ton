@@ -163,4 +163,8 @@ defmodule Ton.Boc.Header do
       cells_data: cells_data
     }
   end
+
+  def reach_boc_magic_prefix, do: @reach_boc_magic_prefix
+  def lean_boc_magic_prefix, do: @lean_boc_magic_prefix
+  def lean_boc_magic_prefix_crc, do: @lean_boc_magic_prefix_crc
 end

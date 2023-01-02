@@ -167,6 +167,10 @@ defmodule Ton.Bitstring do
     :binary.list_to_bin(result)
   end
 
+  def get_top_upped_length(%__MODULE__{cursor: cursor}) do
+    Float.ceil(cursor / 8.0) |> trunc()
+  end
+
   def get_bit(%__MODULE__{array: array, length: length}, bit_number) do
     check_bit_number(length, bit_number)
 
