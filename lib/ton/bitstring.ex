@@ -57,6 +57,14 @@ defmodule Ton.Bitstring do
     end)
   end
 
+  def write_bistring(bitstring, %__MODULE__{cursor: cursor} = second_bitstring) do
+    Enum.reduce(0..(cursor - 1), bitstring, fn idx, acc ->
+      bit = get_bit(second_bitstring, idx)
+
+      write_bit(acc, bit)
+    end)
+  end
+
   def write_uint8(bitstring, value) do
     write_uint(bitstring, value, 8)
   end
@@ -200,6 +208,10 @@ defmodule Ton.Bitstring do
     array = List.replace_at(array, idx, byte ||| 1 <<< (7 - rem(bit_number, 8)))
 
     %{bitstring | array: array}
+  end
+
+  def available(%__MODULE__{cursor: cursor, length: length}) do
+    length - cursor
   end
 
   defp check_bit_number(length, bit_number) do
