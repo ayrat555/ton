@@ -4,6 +4,8 @@ defmodule Ton.Cell do
   defstruct [:refs, :data, :kind]
 
   alias Ton.Bitstring
+  alias Ton.Boc.Header
+  alias Ton.Cell.TopologicalOrder
   alias Ton.Utils
 
   def new(kind \\ :ordinary, data \\ nil) do
@@ -69,6 +71,107 @@ defmodule Ton.Cell do
     refs = Enum.reverse(reversed_refs)
 
     {%__MODULE__{refs: refs, data: bits, kind: kind}, residue}
+  end
+
+  def serialize(root_cell, opts \\ []) do
+    has_idx = Keyword.get(opts, :has_idex, true)
+    hash_crc32 = Keyword.get(opts, :has_idex, true)
+    has_cache_bits = Keyword.get(opts, :has_cache_bits, false)
+    flags = Keyword.get(opts, :flags, 0)
+
+    all_cells = TopologicalOrder.sort(root_cell)
+    cells_num = Enum.count(all_cells)
+    s = Integer.to_string(cells_num, 2) |> String.length()
+    s_bytes = max(Float.ceil(s / 8.0) |> trunc(), 1)
+
+    sizes =
+      Enum.map(all_cells, fn cell ->
+        calc_serialized_cell_size(cell.cell, s_bytes)
+      end)
+
+    {full_size, size_indexes_reversed} =
+      Enum.reduce(sizes, {0, []}, fn size, {full_size_acc, size_indexes_acc} ->
+        current_size = full_size_acc + size
+
+        {current_size, [current_size | size_indexes_acc]}
+      end)
+
+    size_indexes = Enum.reverse(size_indexes_reversed)
+    offset_bits = Integer.to_string(full_size, 2) |> String.length()
+    offset_bytes = max(Float.ceil(offset_bits / 8.0) |> trunc(), 1)
+
+    serialization = Header.reach_boc_magic_prefix()
+
+    serialization =
+      serialization <>
+        <<if(has_idx, do: 1, else: 0) <<< 7 ||| if(hash_crc32, do: 1, else: 0) <<< 6 |||
+            if(has_cache_bits, do: 1, else: 0) <<< 5 ||| flags <<< 3 ||| s_bytes>>
+
+    serialization =
+      (serialization <> <<offset_bytes>>)
+      |> write_number(cells_num, s_bytes)
+      |> write_number(1, s_bytes)
+      |> write_number(0, s_bytes)
+      |> write_number(full_size, offset_bytes)
+      |> write_number(0, s_bytes)
+
+    serialization =
+      if has_idx do
+        Enum.reduce(size_indexes, serialization, fn size_index, acc ->
+          write_number(acc, size_index, offset_bytes)
+        end)
+      else
+        serialization
+      end
+
+    serialization =
+      Enum.reduce(all_cells, serialization, fn cell, acc ->
+        serialize_for_boc(acc, cell.cell, cell.refs, s_bytes)
+      end)
+
+    if hash_crc32 do
+      serialization <> EvilCrc32c.calc!(serialization)
+    else
+      serialization
+    end
+  end
+
+  defp calc_serialized_cell_size(cell, s) do
+    2 +
+      if(cell.kind == :ordinary, do: 0, else: 1) +
+      Bitstring.get_top_upped_length(cell.data) +
+      Enum.count(cell.refs) * s
+  end
+
+  defp serialize_for_boc(binary, cell, refs, s_size) do
+    refs_descriptor = refs_descriptor(cell)
+    bits_descriptor = bits_descriptor(cell)
+
+    binary = binary <> refs_descriptor <> bits_descriptor
+
+    binary =
+      case cell.kind do
+        :pruned -> binary <> <<1>>
+        :library_reference -> binary <> <<2>>
+        :merkle_proof -> binary <> <<3>>
+        :merkle_update -> binary <> <<4>>
+        :ordinary -> binary
+      end
+
+    binary = binary <> Bitstring.get_top_upped_array(cell.data)
+
+    Enum.reduce(refs, binary, fn ref_index, acc ->
+      write_number(acc, ref_index, s_size)
+    end)
+  end
+
+  defp write_number(binary, number, bytes) do
+    number_bin =
+      Enum.reduce((bytes - 1)..0, <<>>, fn i, acc ->
+        acc <> <<number >>> (i * 8) &&& 0xFF>>
+      end)
+
+    binary <> number_bin
   end
 
   def hash(cell) do
