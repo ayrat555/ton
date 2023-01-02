@@ -16,7 +16,7 @@ defmodule Ton.CommonMessageInfo do
     cell = cell || Cell.new()
 
     cell_with_state_init =
-      if cell.state_init do
+      if info.wallet do
         state_init_cell = Wallet.state_init_cell(info.wallet)
 
         if Bitstring.available(cell.data) - 1 >= state_init_cell.data.cursor do
