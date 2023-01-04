@@ -21,8 +21,7 @@ defmodule Ton.BocTest do
                  },
                  kind: :ordinary
                }
-             ] =
-               Boc.parse(contract_source_code)
+             ] = Boc.parse(contract_source_code)
     end
   end
 end
