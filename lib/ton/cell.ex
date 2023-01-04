@@ -78,7 +78,7 @@ defmodule Ton.Cell do
 
   def serialize(root_cell, opts \\ []) do
     has_idx = Keyword.get(opts, :has_idx, true)
-    hash_crc32 = Keyword.get(opts, :has_idex, true)
+    hash_crc32 = Keyword.get(opts, :hash_crc32, true)
     has_cache_bits = Keyword.get(opts, :has_cache_bits, false)
     flags = Keyword.get(opts, :flags, 0)
 
