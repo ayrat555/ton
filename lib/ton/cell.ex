@@ -1,4 +1,7 @@
 defmodule Ton.Cell do
+  @moduledoc """
+  Cell data structure used in serialization and deserialization
+  """
   import Bitwise
 
   defstruct [:refs, :data, :kind]
@@ -75,7 +78,7 @@ defmodule Ton.Cell do
 
   def serialize(root_cell, opts \\ []) do
     has_idx = Keyword.get(opts, :has_idx, true)
-    hash_crc32 = Keyword.get(opts, :has_idex, true)
+    hash_crc32 = Keyword.get(opts, :hash_crc32, true)
     has_cache_bits = Keyword.get(opts, :has_cache_bits, false)
     flags = Keyword.get(opts, :flags, 0)
 
@@ -209,12 +212,12 @@ defmodule Ton.Cell do
   end
 
   def refs_descriptor(cell) do
-    # TODO: different for exotic cells
+    # different for exotic cells
     <<Enum.count(cell.refs)>>
   end
 
   def bits_descriptor(cell) do
-    # TODO: different for exotic cells
+    # different for exotic cells
 
     len = cell.data.cursor
 
@@ -225,7 +228,7 @@ defmodule Ton.Cell do
   end
 
   def max_level(_cell) do
-    # TODO: different for exotic cells
+    # different for exotic cells
     0
   end
 

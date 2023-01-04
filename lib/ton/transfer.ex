@@ -1,4 +1,8 @@
 defmodule Ton.Transfer do
+  @moduledoc """
+  Defines an actual transfer
+  """
+
   alias Ton.Bitstring
   alias Ton.Cell
   alias Ton.InternalMessage

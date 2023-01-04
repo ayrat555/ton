@@ -1,4 +1,7 @@
 defmodule Ton.Address do
+  @moduledoc """
+  Functions for parsing, validating and serialization of addresses.
+  """
   import Bitwise
 
   alias Ton.Crc16

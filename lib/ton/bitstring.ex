@@ -1,4 +1,8 @@
 defmodule Ton.Bitstring do
+  @moduledoc """
+  Logic for working with arrays of bits
+  """
+
   import Bitwise
 
   defstruct [

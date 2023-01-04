@@ -1,4 +1,8 @@
 defmodule Ton.Boc.Header do
+  @moduledoc """
+  Logic used for contract deserization from the BOC encoding
+  """
+
   import Bitwise
 
   alias Ton.Utils
@@ -24,7 +28,6 @@ defmodule Ton.Boc.Header do
   @lean_boc_magic_prefix_crc <<172, 195, 167, 40>>
 
   def parse(binary_data) when byte_size(binary_data) < 5 do
-    # TODO: handle gracefully
     raise "not enough bytes for magic prefix"
   end
 
@@ -65,14 +68,12 @@ defmodule Ton.Boc.Header do
           {has_idx, hash_crc32, has_cache_bits, flags, size_bytes}
 
         true ->
-          # TODO: handle gracefully
           raise "unknown magic header"
       end
 
     <<_heade_bytes::8, serialized_boc::binary>> = serialized_boc
 
     if byte_size(serialized_boc) < 1 + 5 * size_bytes do
-      # TODO: handle gracefully
       raise "not enough bytes for encoding cells counters"
     end
 
@@ -84,7 +85,6 @@ defmodule Ton.Boc.Header do
     {tot_cells_size, serialized_boc} = Utils.read_n_bytes_uint(serialized_boc, offset_bytes)
 
     if byte_size(serialized_boc) < roots_num * size_bytes do
-      # TODO: handle gracefully
       raise "Not enough bytes for encoding root cells hashes"
     end
 

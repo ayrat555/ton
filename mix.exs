@@ -4,11 +4,11 @@ defmodule Ton.MixProject do
   def project do
     [
       app: :ton,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      description: "Placeholder for now",
+      description: "TON (The Open Network) SDK",
       package: [
         maintainers: ["Ayrat Badykov"],
         licenses: ["MIT"],

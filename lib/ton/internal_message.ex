@@ -1,4 +1,6 @@
 defmodule Ton.InternalMessage do
+  @moduledoc false
+
   alias Ton.Bitstring
   alias Ton.Cell
 
