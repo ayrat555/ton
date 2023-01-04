@@ -1,6 +1,6 @@
 defmodule Ton.Cell do
   @moduledoc """
-  Cell data structure used in serialization and deserializion
+  Cell data structure used in serialization and deserialization
   """
   import Bitwise
 
