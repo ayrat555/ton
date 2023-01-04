@@ -1,4 +1,8 @@
 defmodule Ton.Boc do
+  @moduledoc """
+  Deserialization of cells from a header
+  """
+
   alias Ton.Boc.Header
   alias Ton.Cell
 

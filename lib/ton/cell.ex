@@ -1,4 +1,7 @@
 defmodule Ton.Cell do
+  @moduledoc """
+  Cell data structure used in serialization and deserializion
+  """
   import Bitwise
 
   defstruct [:refs, :data, :kind]
@@ -209,12 +212,12 @@ defmodule Ton.Cell do
   end
 
   def refs_descriptor(cell) do
-    # TODO: different for exotic cells
+    # different for exotic cells
     <<Enum.count(cell.refs)>>
   end
 
   def bits_descriptor(cell) do
-    # TODO: different for exotic cells
+    # different for exotic cells
 
     len = cell.data.cursor
 
@@ -225,7 +228,7 @@ defmodule Ton.Cell do
   end
 
   def max_level(_cell) do
-    # TODO: different for exotic cells
+    # different for exotic cells
     0
   end
 

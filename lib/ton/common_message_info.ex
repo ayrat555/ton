@@ -1,4 +1,8 @@
 defmodule Ton.CommonMessageInfo do
+  @moduledoc """
+  Common message info used in an external message
+  """
+
   alias Ton.Bitstring
   alias Ton.Cell
   alias Ton.Wallet

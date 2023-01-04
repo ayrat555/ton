@@ -1,4 +1,8 @@
 defmodule Ton.ExternalMessage do
+  @moduledoc """
+  An external message required to make transfers
+  """
+
   defstruct [:wallet, :common_message_info]
 
   alias Ton.Bitstring

@@ -1,4 +1,8 @@
 defmodule Ton.Wallet do
+  @moduledoc """
+  Defines a wallet
+  """
+
   alias Ton.Bitstring
   alias Ton.Boc
   alias Ton.Cell

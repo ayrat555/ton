@@ -1,4 +1,8 @@
 defmodule Ton.Cell.TopologicalOrder do
+  @moduledoc """
+  Cell order for serialization
+  """
+
   alias Ton.Cell
 
   def sort(root_cell) do

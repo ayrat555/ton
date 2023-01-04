@@ -1,4 +1,8 @@
 defmodule Ton.Utils do
+  @moduledoc """
+  Various utility functions
+  """
+
   alias Salty.Sign.Ed25519
 
   def read_n_bytes_uint(binary_data, n) do
