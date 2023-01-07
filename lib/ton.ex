@@ -4,7 +4,9 @@ defmodule Ton do
   """
 
   alias Salty.Sign.Ed25519
+  alias Ton.Address
   alias Ton.KeyPair
+  alias Ton.Wallet
 
   @pbkdf2_options %{
     alg: "sha512",
@@ -72,5 +74,55 @@ defmodule Ton do
   @spec mnemonic_to_entropy(String.t(), String.t()) :: binary()
   def mnemonic_to_entropy(mnemonic, password \\ "") do
     :crypto.mac(:hmac, :sha512, mnemonic, password)
+  end
+
+  @doc """
+  Initializes a `Wallet` struct from public_key, workchain and wallet_id
+
+  ## Examples
+
+    iex> keypair = Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
+    iex> %Ton.Wallet{initial_code: _, initial_data: _, workchain: 0, wallet_id: 698983191, public_key: <<73, 245, 11, 185, 76, 95, 180, 99, 83, 74, 157, 13, 240, 216, 227, 155, 203, 147, 16, 149, 137, 218, 246, 81, 151, 233, 21, 28, 55, 119, 64, 47>>} = Ton.create_wallet(keypair.public_key)
+  """
+
+  @spec create_wallet(binary(), integer(), integer()) :: Wallet.t()
+  def create_wallet(public_key, workchain \\ 0, wallet_id \\ 698_983_191) do
+    Wallet.create(public_key, workchain, wallet_id)
+  end
+
+  @doc """
+  Parses and validates an address
+
+  ## Examples
+
+    iex> Ton.parse_address("UQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjKIj")
+    {:ok, %Ton.Address{test_only: false, bounceable: false, workchain: 0, hash: <<128, 32, 16, 13, 65, 228, 23, 233, 65, 230, 70, 12, 71, 25, 30, 56, 161, 66, 251, 84, 228, 4, 246, 254, 29, 198, 105, 90, 219, 114, 169, 140>>}}
+
+    iex> Ton.parse_address("address")
+    {:error, :invalid_base64}
+  """
+  @spec parse_address(binary()) :: {:ok, Address.t()} | {:error, atom()}
+  def parse_address(address) do
+    Address.parse(address)
+  end
+
+  @doc """
+  Generates a friendly adress from a wallet struct
+
+  ## Examples
+
+    iex> keypair = Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
+    iex> wallet = Ton.create_wallet(keypair.public_key)
+    iex> Ton.wallet_to_friendly_address(wallet)
+    "EQAC824gsw8OZLoMV6_nr4nkxaEQFlbzoiHHOWIYY81eM5rQ"
+
+    iex> keypair = Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
+    iex> wallet = Ton.create_wallet(keypair.public_key)
+    iex> Ton.wallet_to_friendly_address(wallet, [url_safe: false, bounceable: false, test_only: true])
+    "0QAC824gsw8OZLoMV6/nr4nkxaEQFlbzoiHHOWIYY81eM3yf"
+  """
+  @spec wallet_to_friendly_address(Wallet.t(), Keyword.t()) :: binary()
+  def wallet_to_friendly_address(wallet, params \\ []) do
+    Address.friendly_address(wallet, params)
   end
 end
