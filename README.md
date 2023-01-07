@@ -8,7 +8,7 @@ TON (The Open Network) SDK. It allows:
 - Parse an address
 - Create a transaction which can be submitted using TON API
 
-The library doesn't include http client
+The library doesn't include an http client
 
 ## Dependencies
 
