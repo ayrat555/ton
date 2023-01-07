@@ -1,6 +1,6 @@
 defmodule Ton.Address do
   @moduledoc """
-  Functions for parsing, validating and serialization of addresses.
+  Functions for parsing, validation and serialization of TON addresses.
   """
   import Bitwise
 
@@ -13,6 +13,14 @@ defmodule Ton.Address do
 
   defstruct [:test_only, :bounceable, :workchain, :hash]
 
+  @type t :: %__MODULE__{
+          test_only: boolean(),
+          bounceable: boolean(),
+          workchain: integer(),
+          hash: binary()
+        }
+
+  @spec parse(binary()) :: {:ok, t()} | {:error, atom()}
   def parse(address_str) do
     with {:ok, binary_address} <- decode_base64(address_str),
          :ok <- check_length(binary_address),
@@ -30,6 +38,7 @@ defmodule Ton.Address do
     end
   end
 
+  @spec friendly_address(Wallet.t()) :: binary()
   def friendly_address(%Wallet{} = wallet, params \\ []) do
     url_safe = Keyword.get(params, :url_safe, true)
     bounceable = Keyword.get(params, :bounceable, true)
@@ -76,10 +85,10 @@ defmodule Ton.Address do
     end
   end
 
-  def check_length(address_binary) when byte_size(address_binary) == 36, do: :ok
-  def check_length(_address_binary), do: {:error, :invalid_length}
+  defp check_length(address_binary) when byte_size(address_binary) == 36, do: :ok
+  defp check_length(_address_binary), do: {:error, :invalid_length}
 
-  def check_crc(<<address::binary-size(34), checksum_code::binary-size(2)>>) do
+  defp check_crc(<<address::binary-size(34), checksum_code::binary-size(2)>>) do
     if Crc16.calc(address) == checksum_code do
       {:ok, address}
     else
@@ -87,7 +96,7 @@ defmodule Ton.Address do
     end
   end
 
-  def check_tag(tag) do
+  defp check_tag(tag) do
     {tag, test_only} =
       if (tag &&& @test_flag) > 0 do
         tag = Bitwise.bxor(tag, @test_flag)

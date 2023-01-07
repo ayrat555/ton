@@ -1,4 +1,4 @@
 lib/ton.ex:35: Function mnemonic_to_keypair/1 has no local return
 lib/ton.ex:35: Function mnemonic_to_keypair/2 has no local return
-lib/ton/transfer.ex:61: Function serialize_and_sign/2 has no local return
-lib/ton/utils.ex:26: Function sign/2 has no local return
+lib/ton/transfer.ex:75: Function serialize_and_sign/2 has no local return
+lib/ton/utils.ex:28: Function sign/2 has no local return

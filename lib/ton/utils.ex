@@ -5,6 +5,7 @@ defmodule Ton.Utils do
 
   alias Salty.Sign.Ed25519
 
+  @spec read_n_bytes_uint(binary(), non_neg_integer()) :: {non_neg_integer(), binary()}
   def read_n_bytes_uint(binary_data, n) do
     <<prefix::binary-size(n), tail::binary>> = binary_data
 
@@ -18,11 +19,12 @@ defmodule Ton.Utils do
     {result, tail}
   end
 
+  @spec sha256(binary()) :: binary()
   def sha256(binary_data) do
-    :sha256
-    |> :crypto.hash(binary_data)
+    :crypto.hash(:sha256, binary_data)
   end
 
+  @spec sign(binary(), binary()) :: binary()
   def sign(data, private_key) do
     {:ok, <<signature::binary-size(64), ^data::binary>>} = Ed25519.sign(data, private_key)
 

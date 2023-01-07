@@ -11,6 +11,14 @@ defmodule Ton.Cell do
   alias Ton.Cell.TopologicalOrder
   alias Ton.Utils
 
+  @type cell_kind :: :pruned | :library_reference | :merkle_proof | :merkle_update | :ordinary
+
+  @type t :: %__MODULE__{
+          data: Bitstring.t(),
+          kind: cell_kind()
+        }
+
+  @spec new(atom(), Bitstring.t() | nil) :: t()
   def new(kind \\ :ordinary, data \\ nil) do
     data = data || Bitstring.new(1023)
 
@@ -21,6 +29,7 @@ defmodule Ton.Cell do
     }
   end
 
+  @spec parse(binary(), non_neg_integer()) :: {t(), binary()} | no_return()
   def parse(binary_data, reference_index_size) do
     if byte_size(binary_data) < 2 do
       raise "Not enough bytes to encode cell descriptors"
@@ -76,6 +85,7 @@ defmodule Ton.Cell do
     {%__MODULE__{refs: refs, data: bits, kind: kind}, residue}
   end
 
+  @spec serialize(t(), Keyword.t()) :: binary()
   def serialize(root_cell, opts \\ []) do
     has_idx = Keyword.get(opts, :has_idx, true)
     hash_crc32 = Keyword.get(opts, :hash_crc32, true)
@@ -139,6 +149,20 @@ defmodule Ton.Cell do
     end
   end
 
+  @spec hash(t()) :: binary()
+  def hash(cell) do
+    cell
+    |> binary_repr()
+    |> Utils.sha256()
+  end
+
+  @spec write_cell(t(), t()) :: t()
+  def write_cell(cell, another_cell) do
+    new_data = Bitstring.write_bistring(cell.data, another_cell.data)
+
+    %{cell | refs: cell.refs ++ another_cell.refs, data: new_data}
+  end
+
   defp calc_serialized_cell_size(cell, s) do
     2 +
       if(cell.kind == :ordinary, do: 0, else: 1) +
@@ -177,13 +201,7 @@ defmodule Ton.Cell do
     binary <> number_bin
   end
 
-  def hash(cell) do
-    cell
-    |> binary_repr()
-    |> Utils.sha256()
-  end
-
-  def binary_repr(cell) do
+  defp binary_repr(cell) do
     data = data_with_descriptors(cell)
 
     data =
@@ -202,7 +220,7 @@ defmodule Ton.Cell do
     result
   end
 
-  def data_with_descriptors(cell) do
+  defp data_with_descriptors(cell) do
     d1 = refs_descriptor(cell)
     d2 = bits_descriptor(cell)
 
@@ -211,12 +229,12 @@ defmodule Ton.Cell do
     d1 <> d2 <> tu_bits
   end
 
-  def refs_descriptor(cell) do
+  defp refs_descriptor(cell) do
     # different for exotic cells
     <<Enum.count(cell.refs)>>
   end
 
-  def bits_descriptor(cell) do
+  defp bits_descriptor(cell) do
     # different for exotic cells
 
     len = cell.data.cursor
@@ -227,12 +245,7 @@ defmodule Ton.Cell do
     <<ceil + floor>>
   end
 
-  def max_level(_cell) do
-    # different for exotic cells
-    0
-  end
-
-  def max_depth_as_bin(cell) do
+  defp max_depth_as_bin(cell) do
     max_depth = max_depth(cell)
 
     d1 = rem(max_depth, 256)
@@ -241,11 +254,11 @@ defmodule Ton.Cell do
     <<d2, d1>>
   end
 
-  def max_depth(refs)
+  defp max_depth(refs)
 
-  def max_depth(%__MODULE__{refs: []}), do: 0
+  defp max_depth(%__MODULE__{refs: []}), do: 0
 
-  def max_depth(%__MODULE__{refs: cells}) do
+  defp max_depth(%__MODULE__{refs: cells}) do
     result =
       Enum.reduce(cells, 0, fn ref_cell, acc ->
         current_cell_depth = max_depth(ref_cell)
@@ -258,11 +271,5 @@ defmodule Ton.Cell do
       end)
 
     result + 1
-  end
-
-  def write_cell(cell, another_cell) do
-    new_data = Bitstring.write_bistring(cell.data, another_cell.data)
-
-    %{cell | refs: cell.refs ++ another_cell.refs, data: new_data}
   end
 end

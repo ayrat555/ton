@@ -12,10 +12,17 @@ defmodule Ton.CommonMessageInfo do
     :body
   ]
 
+  @type t :: %__MODULE__{
+          wallet: Wallet.t(),
+          body: Cell.t()
+        }
+
+  @spec new(Wallet.t() | nil, Cell.t() | nil) :: t()
   def new(wallet \\ nil, body \\ nil) do
     %__MODULE__{wallet: wallet, body: body}
   end
 
+  @spec serialize(t(), Cell.t() | nil) :: Cell.t()
   def serialize(info, cell \\ nil) do
     cell = cell || Cell.new()
 

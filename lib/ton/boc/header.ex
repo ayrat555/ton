@@ -1,6 +1,6 @@
 defmodule Ton.Boc.Header do
   @moduledoc """
-  Logic used for contract deserization from the BOC encoding
+  Logic used for contract deserialization from the BOC format
   """
 
   import Bitwise
@@ -23,10 +23,27 @@ defmodule Ton.Boc.Header do
     :cells_data
   ]
 
+  @type t :: %__MODULE__{
+          has_idx: boolean(),
+          hash_crc32: boolean(),
+          has_cache_bits: boolean(),
+          flags: non_neg_integer(),
+          size_bytes: non_neg_integer(),
+          off_bytes: non_neg_integer(),
+          cells_num: non_neg_integer(),
+          roots_num: non_neg_integer(),
+          absent_num: non_neg_integer(),
+          tot_cells_size: non_neg_integer(),
+          root_list: [non_neg_integer()],
+          index: [non_neg_integer()],
+          cells_data: binary()
+        }
+
   @reach_boc_magic_prefix <<181, 238, 156, 114>>
   @lean_boc_magic_prefix <<104, 255, 101, 243>>
   @lean_boc_magic_prefix_crc <<172, 195, 167, 40>>
 
+  @spec parse(binary()) :: t() | no_return()
   def parse(binary_data) when byte_size(binary_data) < 5 do
     raise "not enough bytes for magic prefix"
   end
@@ -164,7 +181,12 @@ defmodule Ton.Boc.Header do
     }
   end
 
+  @spec reach_boc_magic_prefix() :: binary()
   def reach_boc_magic_prefix, do: @reach_boc_magic_prefix
+
+  @spec lean_boc_magic_prefix() :: binary()
   def lean_boc_magic_prefix, do: @lean_boc_magic_prefix
+
+  @spec lean_boc_magic_prefix_crc() :: binary()
   def lean_boc_magic_prefix_crc, do: @lean_boc_magic_prefix_crc
 end
