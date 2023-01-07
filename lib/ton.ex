@@ -7,6 +7,12 @@ defmodule Ton do
   alias Ton.Address
   alias Ton.KeyPair
   alias Ton.Wallet
+  alias Ton.Address
+  alias Ton.Cell
+  alias Ton.CommonMessageInfo
+  alias Ton.ExternalMessage
+  alias Ton.Transfer
+  alias Ton.Wallet
 
   @pbkdf2_options %{
     alg: "sha512",
@@ -77,7 +83,7 @@ defmodule Ton do
   end
 
   @doc """
-  Initializes a `Wallet` struct from public_key, workchain and wallet_id
+  Initializes a `Wallet` struct from public_key, workchain and wallet_id. The version of the wallet contract is v4 r2.
 
   ## Examples
 
@@ -124,5 +130,50 @@ defmodule Ton do
   @spec wallet_to_friendly_address(Wallet.t(), Keyword.t()) :: binary()
   def wallet_to_friendly_address(wallet, params \\ []) do
     Address.friendly_address(wallet, params)
+  end
+
+  @doc """
+  Create a transfer boc which can be used to submit a transaction
+
+  ## Examples
+
+    iex> keypair = Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
+    iex> wallet = Ton.create_wallet(keypair.public_key)
+    iex> {:ok, to_address} = Ton.parse_address("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
+    iex> params = [seqno: 5, bounce: true, secret_key: keypair.secret_key, value: 1, to_address: to_address, timeout: 60]
+    iex> <<181, 238, 156, 114, 65, 1, 2, 1, 0, 167, 0, 1, 225, 136, 0, 5, 230, 220, 65, 102, 30, 28, 201, _tail::binary>> = Ton.create_transfer_boc(wallet, params)
+  """
+
+  @spec create_transfer_boc(Wallet.t(), Keyword.t()) :: binary() | no_return()
+  def create_transfer_boc(wallet, params) do
+    seqno = Keyword.fetch!(params, :seqno)
+    bounce = Keyword.fetch!(params, :bounce)
+    secret_key = Keyword.fetch!(params, :secret_key)
+    value = Keyword.fetch!(params, :value)
+    to_address = Keyword.fetch!(params, :to_address)
+    timeout = Keyword.fetch!(params, :timeout)
+
+    transfer =
+      Transfer.new(
+        seqno: seqno,
+        value: value,
+        bounce: bounce,
+        to: to_address,
+        wallet_id: wallet.wallet_id,
+        timeout: timeout
+      )
+      |> Transfer.serialize_and_sign(secret_key)
+
+    common_message_info =
+      if seqno == 0 do
+        CommonMessageInfo.new(wallet, transfer)
+      else
+        CommonMessageInfo.new(nil, transfer)
+      end
+
+    wallet
+    |> ExternalMessage.new(common_message_info)
+    |> ExternalMessage.serialize()
+    |> Cell.serialize(has_idx: false)
   end
 end
