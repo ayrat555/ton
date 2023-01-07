@@ -5,12 +5,10 @@ defmodule Ton do
 
   alias Salty.Sign.Ed25519
   alias Ton.Address
-  alias Ton.KeyPair
-  alias Ton.Wallet
-  alias Ton.Address
   alias Ton.Cell
   alias Ton.CommonMessageInfo
   alias Ton.ExternalMessage
+  alias Ton.KeyPair
   alias Ton.Transfer
   alias Ton.Wallet
 
