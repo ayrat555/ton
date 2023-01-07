@@ -14,7 +14,7 @@ The library doesn't include an http client
 
 The library requires:
 
-- libsodium 1.0.12 installed on your system
+- libsodium (1.0.12 or later) installed on your system
 - rust
 
 ## Installation
