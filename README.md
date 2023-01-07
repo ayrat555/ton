@@ -31,7 +31,7 @@ end
 
 ## Docs
 
-The docs can be found at [https://hexdocs.pm/ton](https://hexdocs.pm/ton)
+The docs can be found at [https://hexdocs.pm/ton](https://hexdocs.pm/ton/Ton.html)
 
 ## Author
 
