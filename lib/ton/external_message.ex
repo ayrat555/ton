@@ -28,8 +28,7 @@ defmodule Ton.ExternalMessage do
       hash: Wallet.hash(external_message.wallet),
       workchain: external_message.wallet.workchain,
       test_only: false,
-      bounceable: false,
-      workchain: 0
+      bounceable: false
     }
 
     data =
