@@ -55,7 +55,7 @@ defmodule Ton.TransferTest do
 
       {:ok, address} = Address.parse("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
 
-      wallet = Wallet.create(0, keypair.public_key)
+      wallet = Wallet.create(keypair.public_key)
 
       params = [
         seqno: 1,
@@ -134,7 +134,7 @@ defmodule Ton.TransferTest do
 
       {:ok, address} = Address.parse("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
 
-      wallet = Wallet.create(0, keypair.public_key)
+      wallet = Wallet.create(keypair.public_key)
 
       params = [
         seqno: 1,

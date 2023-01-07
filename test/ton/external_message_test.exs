@@ -15,7 +15,7 @@ defmodule ExternalMessageTest do
           "about about about about about about about about about about about about about about about about about about about about about about about about"
         )
 
-      wallet = Wallet.create(0, keypair.public_key)
+      wallet = Wallet.create(keypair.public_key)
       {:ok, address} = Address.parse("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
 
       transfer =
@@ -51,7 +51,7 @@ defmodule ExternalMessageTest do
           "house about about about about about about about about about about about about about about about about about about about about about about about"
         )
 
-      wallet = Wallet.create(0, keypair.public_key)
+      wallet = Wallet.create(keypair.public_key)
       {:ok, address} = Address.parse("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
 
       transfer =

@@ -55,7 +55,7 @@ defmodule Ton.AddressTest do
           "about about about about about about about about about about about about about about about about about about about about about about about about"
         )
 
-      wallet = Wallet.create(0, keypair.public_key)
+      wallet = Wallet.create(keypair.public_key)
 
       assert "EQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjP_m" ==
                Address.friendly_address(wallet, url_safe: true, bounceable: true, test_only: false)
