@@ -5,7 +5,7 @@ const MASK: i32 = 0x80;
 const FFFF: i32 = 0xffff;
 
 #[rustler::nif]
-fn do_calc<'a>(payload: Binary<'a>) -> NifResult<i32> {
+fn calc<'a>(payload: Binary<'a>) -> NifResult<i32> {
     let mut extended_payload: Vec<u8> = vec![];
     extended_payload.extend_from_slice(payload.as_slice());
     extended_payload.append(&mut vec![0, 0]);
@@ -33,4 +33,4 @@ fn do_calc<'a>(payload: Binary<'a>) -> NifResult<i32> {
     Ok(reg)
 }
 
-rustler::init!("Elixir.Ton.Crc16", [do_calc]);
+rustler::init!("Elixir.Ton.Crc16.Impl", [calc]);

@@ -1,10 +1,11 @@
 defmodule Ton.Cell.TopologicalOrder do
   @moduledoc """
-  Cell order for serialization
+  Cell ordering algorithm
   """
 
   alias Ton.Cell
 
+  @spec sort(Cell.t()) :: [%{cell: Cell.t(), refs: [non_neg_integer()]}] | no_return()
   def sort(root_cell) do
     {all_cells, cell_hashes} = flatten_cells([root_cell])
 

@@ -1,11 +1,19 @@
 defmodule Ton.InternalMessage do
   @moduledoc false
 
+  alias Ton.Address
   alias Ton.Bitstring
   alias Ton.Cell
 
   defstruct [:to, :value, :bounce]
 
+  @type t :: %__MODULE__{
+          to: Address.t(),
+          value: non_neg_integer(),
+          bounce: boolean()
+        }
+
+  @spec new(Keyword.t()) :: t()
   def new(params) do
     to = Keyword.fetch!(params, :to)
     value = Keyword.fetch!(params, :value)
@@ -14,6 +22,7 @@ defmodule Ton.InternalMessage do
     %__MODULE__{to: to, value: value, bounce: bounce}
   end
 
+  @spec serialize(t()) :: Cell.t()
   def serialize(internal_message) do
     cell = Cell.new()
 

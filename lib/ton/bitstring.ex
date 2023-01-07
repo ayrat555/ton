@@ -1,9 +1,11 @@
 defmodule Ton.Bitstring do
   @moduledoc """
-  Logic for working with arrays of bits
+  Defines an array of bits. Data structure used in cells
   """
 
   import Bitwise
+
+  alias Ton.Address
 
   defstruct [
     :length,
@@ -11,6 +13,13 @@ defmodule Ton.Bitstring do
     :cursor
   ]
 
+  @type t :: %__MODULE__{
+          length: non_neg_integer(),
+          array: [non_neg_integer()],
+          cursor: non_neg_integer()
+        }
+
+  @spec new(non_neg_integer()) :: t()
   def new(length \\ 1023) do
     size = Float.ceil(length / 8.0) |> trunc()
     array = List.duplicate(0, size)
@@ -22,6 +31,7 @@ defmodule Ton.Bitstring do
     }
   end
 
+  @spec write_address(t(), Address.t() | nil) :: t()
   def write_address(bitstring, nil) do
     write_uint(bitstring, 0, 2)
   end
@@ -34,6 +44,7 @@ defmodule Ton.Bitstring do
     |> write_binary(address.hash)
   end
 
+  @spec write_coins(t(), non_neg_integer()) :: t()
   def write_coins(bitstring, 0) do
     write_uint(bitstring, 0, 4)
   end
@@ -53,6 +64,7 @@ defmodule Ton.Bitstring do
     |> write_uint(value, l * 8)
   end
 
+  @spec write_binary(t(), binary()) :: t()
   def write_binary(bitstring, data) do
     data
     |> :binary.bin_to_list()
@@ -61,6 +73,7 @@ defmodule Ton.Bitstring do
     end)
   end
 
+  @spec write_bistring(t(), t()) :: t()
   def write_bistring(bitstring, %__MODULE__{cursor: cursor} = second_bitstring) do
     Enum.reduce(0..(cursor - 1), bitstring, fn idx, acc ->
       bit = get_bit(second_bitstring, idx)
@@ -69,10 +82,12 @@ defmodule Ton.Bitstring do
     end)
   end
 
+  @spec write_uint8(t(), non_neg_integer()) :: t()
   def write_uint8(bitstring, value) do
     write_uint(bitstring, value, 8)
   end
 
+  @spec write_uint(t(), non_neg_integer(), non_neg_integer()) :: t()
   def write_uint(bitstring, value, bit_length) do
     str_value = Integer.to_string(value, 2)
 
@@ -93,6 +108,7 @@ defmodule Ton.Bitstring do
     end
   end
 
+  @spec write_bit(t(), boolean() | non_neg_integer()) :: t()
   def write_bit(%__MODULE__{cursor: cursor} = bitstring, value)
       when is_boolean(value) do
     bitstring =
@@ -117,6 +133,7 @@ defmodule Ton.Bitstring do
     %{bitstring | cursor: cursor + 1}
   end
 
+  @spec set_top_upped_array(binary(), boolean()) :: t() | no_return()
   def set_top_upped_array(
         binary_data,
         fullfilled_bytes \\ true
@@ -157,6 +174,7 @@ defmodule Ton.Bitstring do
     end
   end
 
+  @spec get_top_upped_array(t()) :: binary()
   def get_top_upped_array(bitstring) do
     top_up = (Float.ceil(bitstring.cursor / 8.0) |> trunc) * 8 - bitstring.cursor
 
@@ -179,10 +197,12 @@ defmodule Ton.Bitstring do
     :binary.list_to_bin(result)
   end
 
+  @spec get_top_upped_length(t()) :: non_neg_integer()
   def get_top_upped_length(%__MODULE__{cursor: cursor}) do
     Float.ceil(cursor / 8.0) |> trunc()
   end
 
+  @spec get_bit(t(), non_neg_integer()) :: boolean()
   def get_bit(%__MODULE__{array: array, length: length}, bit_number) do
     check_bit_number(length, bit_number)
 
@@ -192,6 +212,7 @@ defmodule Ton.Bitstring do
     (byte &&& 1 <<< (7 - rem(bit_number, 8))) > 0
   end
 
+  @spec off_bit(t(), non_neg_integer()) :: t()
   def off_bit(%__MODULE__{array: array, length: length} = bitstring, bit_number) do
     check_bit_number(length, bit_number)
 
@@ -203,6 +224,7 @@ defmodule Ton.Bitstring do
     %{bitstring | array: array}
   end
 
+  @spec on_bit(t(), non_neg_integer()) :: t()
   def on_bit(%__MODULE__{array: array, length: length} = bitstring, bit_number) do
     check_bit_number(length, bit_number)
 
@@ -214,6 +236,7 @@ defmodule Ton.Bitstring do
     %{bitstring | array: array}
   end
 
+  @spec available(t()) :: non_neg_integer()
   def available(%__MODULE__{cursor: cursor, length: length}) do
     length - cursor
   end

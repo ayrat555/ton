@@ -3,6 +3,7 @@ defmodule Ton.Transfer do
   Defines an actual transfer
   """
 
+  alias Ton.Address
   alias Ton.Bitstring
   alias Ton.Cell
   alias Ton.InternalMessage
@@ -10,6 +11,17 @@ defmodule Ton.Transfer do
 
   defstruct [:seqno, :send_mode, :value, :bounce, :timeout, :to, :wallet_id]
 
+  @type t :: %__MODULE__{
+          seqno: non_neg_integer(),
+          value: non_neg_integer(),
+          bounce: boolean(),
+          to: Address.t(),
+          wallet_id: integer(),
+          send_mode: integer(),
+          timeout: non_neg_integer()
+        }
+
+  @spec new(Keyword.t()) :: t()
   def new(params) do
     seqno = Keyword.fetch!(params, :seqno)
     value = Keyword.fetch!(params, :value)
@@ -30,6 +42,7 @@ defmodule Ton.Transfer do
     }
   end
 
+  @spec serialize(t(), Cell.t() | nil) :: Cell.t()
   def serialize(transfer, cell \\ nil) do
     cell = cell || Cell.new()
 
@@ -58,6 +71,7 @@ defmodule Ton.Transfer do
     %{cell | data: data, refs: [internal_message_cell]}
   end
 
+  @spec serialize_and_sign(t(), binary()) :: Cell.t()
   def serialize_and_sign(transfer, private_key) do
     transfer_cell = serialize(transfer)
 

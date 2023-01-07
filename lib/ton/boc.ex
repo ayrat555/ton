@@ -6,6 +6,7 @@ defmodule Ton.Boc do
   alias Ton.Boc.Header
   alias Ton.Cell
 
+  @spec parse(binary()) :: [Cell.t()]
   def parse(binary_data) do
     header = Header.parse(binary_data)
 
