@@ -1,6 +1,6 @@
 defmodule Ton do
   @moduledoc """
-  Documentation for `Ton`.
+  SDK for TON (The Open Network).
   """
 
   alias Salty.Sign.Ed25519
@@ -37,7 +37,7 @@ defmodule Ton do
           64, 47>>
       }
   """
-  @spec mnemonic_to_keypair(String.t(), String.t()) :: {binary(), binary()}
+  @spec mnemonic_to_keypair(String.t(), String.t()) :: KeyPair.t()
   def mnemonic_to_keypair(mnemonic, password \\ "") do
     {:ok, public_key, private_key} =
       mnemonic
