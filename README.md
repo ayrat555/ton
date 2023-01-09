@@ -10,21 +10,16 @@ TON (The Open Network) SDK. It allows:
 
 The library doesn't include an http client
 
-## Dependencies
-
-The library requires:
-
-- libsodium (1.0.12 or later) installed on your system
-- rust
-
 ## Installation
+
+The library requires Rust
 
 The package can be installed by adding `ton` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:ton, "~> 0.2"}
+    {:ton, "~> 0.3"}
   ]
 end
 ```

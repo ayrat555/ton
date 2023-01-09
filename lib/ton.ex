@@ -3,7 +3,6 @@ defmodule Ton do
   SDK for TON (The Open Network).
   """
 
-  alias Salty.Sign.Ed25519
   alias Ton.Address
   alias Ton.Cell
   alias Ton.CommonMessageInfo
@@ -39,10 +38,10 @@ defmodule Ton do
   """
   @spec mnemonic_to_keypair(String.t(), String.t()) :: KeyPair.t()
   def mnemonic_to_keypair(mnemonic, password \\ "") do
-    {:ok, public_key, private_key} =
+    {:ok, {public_key, private_key}} =
       mnemonic
       |> mnemonic_to_seed(password)
-      |> Ed25519.seed_keypair()
+      |> Cafezinho.keypair_from_seed()
 
     KeyPair.new(private_key, public_key)
   end

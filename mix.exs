@@ -4,7 +4,7 @@ defmodule Ton.MixProject do
   def project do
     [
       app: :ton,
-      version: "0.2.2",
+      version: "0.3.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -24,9 +24,6 @@ defmodule Ton.MixProject do
           "README.md",
           "CHANGELOG.md"
         ]
-      ],
-      dialyzer: [
-        ignore_warnings: ".dialyzer_ignore"
       ]
     ]
   end
@@ -43,13 +40,11 @@ defmodule Ton.MixProject do
     [
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:ex_pbkdf2, "~> 0.7.1"},
-      {:libsalty2, "~> 0.3"},
+      {:cafezinho, "~> 0.3.0"},
       {:evil_crc32c, "~> 0.1.2"},
       {:rustler, "~> 0.26"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
-      # {:dep_from_hexpm, "~> 0.3.0"},
-      # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
   end
 end
