@@ -24,9 +24,6 @@ defmodule Ton.MixProject do
           "README.md",
           "CHANGELOG.md"
         ]
-      ],
-      dialyzer: [
-        ignore_warnings: ".dialyzer_ignore"
       ]
     ]
   end
