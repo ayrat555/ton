@@ -3,8 +3,6 @@ defmodule Ton.Utils do
   Various utility functions
   """
 
-  alias Salty.Sign.Ed25519
-
   @spec read_n_bytes_uint(binary(), non_neg_integer()) :: {non_neg_integer(), binary()}
   def read_n_bytes_uint(binary_data, n) do
     <<prefix::binary-size(n), tail::binary>> = binary_data
@@ -26,7 +24,7 @@ defmodule Ton.Utils do
 
   @spec sign(binary(), binary()) :: binary()
   def sign(data, private_key) do
-    {:ok, <<signature::binary-size(64), ^data::binary>>} = Ed25519.sign(data, private_key)
+    {:ok, signature} = Cafezinho.sign(data, private_key)
 
     signature
   end
