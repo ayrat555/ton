@@ -4,8 +4,8 @@ defmodule Ton.InternalMessage do
   alias Ton.Address
   alias Ton.Bitstring
   alias Ton.Cell
-  alias Ton.CommonMessageInfo
   alias Ton.Comment
+  alias Ton.CommonMessageInfo
 
   defstruct [:to, :value, :bounce, :body]
 
