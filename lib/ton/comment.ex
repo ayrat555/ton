@@ -3,8 +3,8 @@ defmodule Ton.Comment do
   Logic for comment serialization
   """
 
-  alias Ton.Cell
   alias Ton.Bitstring
+  alias Ton.Cell
 
   @spec serialize(String.t() | nil, Cell.t() | nil) :: Cell.t()
   def serialize(comment, cell \\ nil) do
