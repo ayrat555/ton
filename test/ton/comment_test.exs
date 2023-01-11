@@ -14,7 +14,7 @@ defmodule Ton.CommentTest do
                kind: :ordinary
              } = cell = Comment.serialize(comment)
 
-      assert "a81c67f34212e38a2c3e64bc8d9d4c184be63b2e7a2a9fab38de3abd9ae5c895" ==
+      assert "88ddc65734637344cb7562752958c773f21ebe6234462e8bec5ded773b8dc667" ==
                cell |> Cell.hash() |> Base.encode16(case: :lower)
     end
 
@@ -28,7 +28,7 @@ defmodule Ton.CommentTest do
                kind: :ordinary
              } = cell = Comment.serialize(comment)
 
-      assert "1a04a7a85212d8e617edfbab2368843a60ef42542524a8e888657d96fd65e395" ==
+      assert "7c822fd0818a94edcea590e647e7b5afe3f2d5c9fc44ad934eecf1aa16b30032" ==
                cell |> Cell.hash() |> Base.encode16(case: :lower)
     end
   end

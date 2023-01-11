@@ -13,7 +13,9 @@ defmodule Ton.Comment do
     write_comment([cell], comment)
 
     if byte_size(comment) > 0 do
-      write_comment([cell], comment)
+      data = Bitstring.write_uint(cell.data, 0, 32)
+
+      write_comment([%{cell | data: data}], comment)
     else
       cell
     end
@@ -44,9 +46,11 @@ defmodule Ton.Comment do
     end
   end
 
-  defp set_refs(cells) do
-    [main_cell | refs] = Enum.reverse(cells)
+  defp set_refs([cell]), do: cell
 
-    %{main_cell | refs: main_cell.refs ++ refs}
+  defp set_refs([cell1 | [cell2 | tail]]) do
+    merged_cell = %{cell2 | refs: cell2.refs ++ [cell1]}
+
+    set_refs([merged_cell | tail])
   end
 end
