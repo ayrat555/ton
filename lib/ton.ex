@@ -137,7 +137,7 @@ defmodule Ton do
       iex> keypair = Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
       iex> wallet = Ton.create_wallet(keypair.public_key)
       iex> {:ok, to_address} = Ton.parse_address("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
-      iex> params = [seqno: 5, bounce: true, secret_key: keypair.secret_key, value: 1, to_address: to_address, timeout: 60]
+      iex> params = [seqno: 5, bounce: true, secret_key: keypair.secret_key, value: 1, to_address: to_address, timeout: 60, comment: "Hello"]
       iex> <<181, 238, 156, 114, 65, 1, 2, 1, 0, 167, 0, 1, 225, 136, 0, 5, 230, 220, 65, 102, 30, 28, 201, _tail::binary>> = Ton.create_transfer_boc(wallet, params)
   """
 
@@ -149,6 +149,7 @@ defmodule Ton do
     value = Keyword.fetch!(params, :value)
     to_address = Keyword.fetch!(params, :to_address)
     timeout = Keyword.fetch!(params, :timeout)
+    comment = Keyword.get(params, :comment)
 
     transfer =
       Transfer.new(
@@ -157,7 +158,8 @@ defmodule Ton do
         bounce: bounce,
         to: to_address,
         wallet_id: wallet.wallet_id,
-        timeout: timeout
+        timeout: timeout,
+        body: comment
       )
       |> Transfer.serialize_and_sign(secret_key)
 

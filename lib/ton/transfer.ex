@@ -9,7 +9,7 @@ defmodule Ton.Transfer do
   alias Ton.InternalMessage
   alias Ton.Utils
 
-  defstruct [:seqno, :send_mode, :value, :bounce, :timeout, :to, :wallet_id]
+  defstruct [:seqno, :send_mode, :value, :bounce, :timeout, :to, :wallet_id, :body]
 
   @type t :: %__MODULE__{
           seqno: non_neg_integer(),
@@ -18,7 +18,8 @@ defmodule Ton.Transfer do
           to: Address.t(),
           wallet_id: integer(),
           send_mode: integer(),
-          timeout: non_neg_integer()
+          timeout: non_neg_integer(),
+          body: binary() | nil
         }
 
   @spec new(Keyword.t()) :: t()
@@ -29,6 +30,7 @@ defmodule Ton.Transfer do
     to = Keyword.fetch!(params, :to)
     wallet_id = Keyword.fetch!(params, :wallet_id)
     send_mode = Keyword.get(params, :send_mode, 3)
+    body = Keyword.get(params, :body)
     timeout = timeout(params)
 
     %__MODULE__{
@@ -38,7 +40,8 @@ defmodule Ton.Transfer do
       bounce: bounce,
       timeout: timeout,
       wallet_id: wallet_id,
-      to: to
+      to: to,
+      body: body
     }
   end
 
@@ -47,7 +50,7 @@ defmodule Ton.Transfer do
     cell = cell || Cell.new()
 
     internal_message_cell =
-      [to: transfer.to, value: transfer.value, bounce: transfer.bounce]
+      [to: transfer.to, value: transfer.value, bounce: transfer.bounce, body: transfer.body]
       |> InternalMessage.new()
       |> InternalMessage.serialize()
 
