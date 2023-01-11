@@ -66,10 +66,8 @@ defmodule Ton.InternalMessage do
       |> Bitstring.write_uint(0, 64)
       # createdAt
       |> Bitstring.write_uint(0, 32)
-      # state init
-      |> Bitstring.write_bit(0)
 
-    # state body
+    # state init and body
     CommonMessageInfo.serialize(internal_message.body, %{cell | data: data})
   end
 end
