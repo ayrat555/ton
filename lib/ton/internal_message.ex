@@ -4,13 +4,16 @@ defmodule Ton.InternalMessage do
   alias Ton.Address
   alias Ton.Bitstring
   alias Ton.Cell
+  alias Ton.Comment
+  alias Ton.CommonMessageInfo
 
-  defstruct [:to, :value, :bounce]
+  defstruct [:to, :value, :bounce, :body]
 
   @type t :: %__MODULE__{
           to: Address.t(),
           value: non_neg_integer(),
-          bounce: boolean()
+          bounce: boolean(),
+          body: CommonMessageInfo.t()
         }
 
   @spec new(Keyword.t()) :: t()
@@ -19,7 +22,18 @@ defmodule Ton.InternalMessage do
     value = Keyword.fetch!(params, :value)
     bounce = Keyword.fetch!(params, :bounce)
 
-    %__MODULE__{to: to, value: value, bounce: bounce}
+    body =
+      case Keyword.get(params, :body) do
+        body when is_binary(body) ->
+          comment = Comment.serialize(body)
+
+          CommonMessageInfo.new(nil, comment)
+
+        _ ->
+          CommonMessageInfo.new(nil, nil)
+      end
+
+    %__MODULE__{to: to, value: value, bounce: bounce, body: body}
   end
 
   @spec serialize(t()) :: Cell.t()
@@ -52,11 +66,8 @@ defmodule Ton.InternalMessage do
       |> Bitstring.write_uint(0, 64)
       # createdAt
       |> Bitstring.write_uint(0, 32)
-      # state init
-      |> Bitstring.write_bit(0)
-      # state body
-      |> Bitstring.write_bit(0)
 
-    %{cell | data: data}
+    # state init and body
+    CommonMessageInfo.serialize(internal_message.body, %{cell | data: data})
   end
 end

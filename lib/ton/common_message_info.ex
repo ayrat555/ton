@@ -57,7 +57,7 @@ defmodule Ton.CommonMessageInfo do
         %{cell_with_state_init | data: data, refs: cell.refs ++ [info.body]}
       end
     else
-      data = Bitstring.write_bit(cell.data, 0)
+      data = Bitstring.write_bit(cell_with_state_init.data, 0)
 
       %{cell | data: data}
     end
