@@ -138,7 +138,7 @@ defmodule Ton do
       iex> wallet = Ton.create_wallet(keypair.public_key)
       iex> {:ok, to_address} = Ton.parse_address("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
       iex> params = [seqno: 5, bounce: true, secret_key: keypair.secret_key, value: 1, to_address: to_address, timeout: 60, comment: "Hello"]
-      iex> <<181, 238, 156, 114, 65, 1, 2, 1, 0, 167, 0, 1, 225, 136, 0, 5, 230, 220, 65, 102, 30, 28, 201, _tail::binary>> = Ton.create_transfer_boc(wallet, params)
+      iex> <<181, 238, 156, 114, 65, 1, 2, 1, 0, 173, 0, 1, 225, 136, 0, 5, _tail::binary>> = Ton.create_transfer_boc(wallet, params)
   """
 
   @spec create_transfer_boc(Wallet.t(), Keyword.t()) :: binary() | no_return()
