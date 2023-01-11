@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 (2023-01-11)
+
+  * Add support of tx comments - [#22](https://github.com/ayrat555/ton/pull/22)
+
 ## 0.3.0 (2023-01-09)
 
   * Use Rust nif instead of C nif for Ed25519
