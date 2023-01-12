@@ -6,11 +6,9 @@ defmodule Ton.Comment do
   alias Ton.Bitstring
   alias Ton.Cell
 
-  @spec serialize(String.t() | nil, Cell.t() | nil) :: Cell.t()
+  @spec serialize(String.t(), Cell.t() | nil) :: Cell.t()
   def serialize(comment, cell \\ nil) do
     cell = cell || Cell.new()
-
-    write_comment([cell], comment)
 
     if byte_size(comment) > 0 do
       data = Bitstring.write_uint(cell.data, 0, 32)
