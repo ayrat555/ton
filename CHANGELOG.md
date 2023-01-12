@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2 (2023-01-12)
+
+  * Add mnemonic generation - [#23](https://github.com/ayrat555/ton/pull/23)
+
 ## 0.3.1 (2023-01-11)
 
   * Add support of tx comments - [#22](https://github.com/ayrat555/ton/pull/22)

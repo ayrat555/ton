@@ -20,6 +20,22 @@ defmodule Ton do
   }
 
   @doc """
+  Generate a random mnemonic with the given number of words (24 by default).
+  See https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
+
+  Examples:
+
+      iex> mnemonic1 = Ton.generate_mnemonic()
+      iex> mnemonic2 = Ton.generate_mnemonic()
+      iex> mnemonic1 |> String.split(" ") |> Enum.count()
+      24
+      iex> mnemonic1 != mnemonic2
+      true
+  """
+  @spec generate_mnemonic(non_neg_integer()) :: String.t() | no_return
+  def generate_mnemonic(word_number \\ 24), do: Mnemoniac.create_mnemonic!(word_number)
+
+  @doc """
   Generates a key pair from a mnemonic.
 
   ## Examples

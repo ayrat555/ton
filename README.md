@@ -1,7 +1,8 @@
 # Ton
 
-TON (The Open Network) SDK. It allows:
+TON (The Open Network) SDK. It has the following features:
 
+- Generate a random mnemonic
 - Generate a seed from a mnemonic
 - Generate public and private keys from a seed
 - Generate a v4r2 wallet from a public key
@@ -19,7 +20,7 @@ The package can be installed by adding `ton` to your list of dependencies in `mi
 ```elixir
 def deps do
   [
-    {:ton, "~> 0.3"}
+    {:ton, "~> 0.3.2"}
   ]
 end
 ```

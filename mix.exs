@@ -4,7 +4,7 @@ defmodule Ton.MixProject do
   def project do
     [
       app: :ton,
-      version: "0.3.1",
+      version: "0.3.2",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -41,6 +41,7 @@ defmodule Ton.MixProject do
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:ex_pbkdf2, "~> 0.7.1"},
       {:cafezinho, "~> 0.3.0"},
+      {:mnemoniac, "~> 0.1.0"},
       {:evil_crc32c, "~> 0.1.2"},
       {:rustler, "~> 0.26"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
