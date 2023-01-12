@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3 (2023-01-12)
+
+  * Improve comment serialization - [#24](https://github.com/ayrat555/ton/pull/24)
+
 ## 0.3.2 (2023-01-12)
 
   * Add mnemonic generation - [#23](https://github.com/ayrat555/ton/pull/23)
