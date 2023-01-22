@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4 (2023-01-22)
+
+  * Update `cafezinho` to 0.3.1 - [#26](https://github.com/ayrat555/ton/pull/26)
+
 ## 0.3.3 (2023-01-12)
 
   * Improve comment serialization - [#24](https://github.com/ayrat555/ton/pull/24)
