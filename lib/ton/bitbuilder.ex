@@ -16,7 +16,7 @@ defmodule Ton.BitBuilder do
   ]
 
   @spec new(non_neg_integer()) :: t()
-  def new(size) do
+  def new(size \\ 1023) do
     length = Float.ceil(size / 8.0) |> trunc()
     array = List.duplicate(0, length)
 
@@ -27,7 +27,7 @@ defmodule Ton.BitBuilder do
   def write_bit(bitbuilder, value) do
     n = bitbuilder.length
 
-    if n > bitbuilder.buffer.length * 8 do
+    if n > Enum.count(bitbuilder.array) * 8 do
       raise "BitBuilder overflow"
     end
 
@@ -122,7 +122,7 @@ defmodule Ton.BitBuilder do
 
         bits_value = number_to_bits(value)
 
-        Enum.reduce(0..(bits - 1), bitbuilder, fn i ->
+        Enum.reduce(0..(bits - 1), bitbuilder, fn i, bitbuilder ->
           off = bits - i - 1
 
           if off < bitbuilder.length do
