@@ -20,7 +20,7 @@ defmodule Ton.BitBuilder do
     length = Float.ceil(size / 8.0) |> trunc()
     array = List.duplicate(0, length)
 
-    %__MODULE__{length: size, array: array}
+    %__MODULE__{length: 0, array: array}
   end
 
   @spec write_bit(t(), boolean() | integer()) :: t()
@@ -116,13 +116,16 @@ defmodule Ton.BitBuilder do
         bitbuilder
 
       true ->
-        if value < 0 || value >= 1 <<< bits do
+        v_bits = 1 <<< bits
+
+        if value < 0 || value >= v_bits do
           raise "bitLength is too small for a value #{value}. Got #{bits}"
         end
 
         bits_value = number_to_bits(value)
 
         Enum.reduce(0..(bits - 1), bitbuilder, fn i, bitbuilder ->
+          IO.inspect(bitbuilder)
           off = bits - i - 1
 
           if off < bitbuilder.length do
@@ -268,12 +271,17 @@ defmodule Ton.BitBuilder do
     end
   end
 
+  @spec build(t()) :: NewBitstring.t()
+  def build(bitbuilder) do
+    NewBitstring.new(bitbuilder.array, 0, bitbuilder.length)
+  end
+
   defp number_to_bits(current_number, acc \\ [])
 
   defp number_to_bits(current_number, acc) when current_number <= 0, do: Enum.reverse(acc)
 
   defp number_to_bits(current_number, acc) do
-    current_value = rem(current_number, 2)
+    current_value = rem(current_number, 2) == 1
 
     number_to_bits(div(current_number, 2), [current_value | acc])
   end
