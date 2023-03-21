@@ -2,6 +2,7 @@ defmodule Ton.BitBuilderTest do
   use ExUnit.Case
 
   alias Ton.BitBuilder
+  alias Ton.NewBitstring.CanonicalString
 
   describe "write_uint/3" do
     test "serializez uints" do
@@ -58,17 +59,13 @@ defmodule Ton.BitBuilderTest do
         [53_126, 26, "0033E1A_"]
       ]
 
-      Enum.each(tests, fn [number, bits, result_start] ->
-        bitbuilder = BitBuilder.new()
+      Enum.each(tests, fn [number, bits, result] ->
+        bitstring =
+          BitBuilder.new()
+          |> BitBuilder.write_uint(number, bits)
+          |> BitBuilder.build()
 
-        bitbuilder = BitBuilder.write_uint(bitbuilder, number, bits)
-
-        result =
-          bitbuilder.array
-          |> :binary.list_to_bin()
-          |> Base.encode16(case: :upper)
-
-        assert String.starts_with?(result, result_start)
+        assert result == CanonicalString.to_string(bitstring)
       end)
     end
   end
