@@ -4,7 +4,6 @@ defmodule Ton.Address do
   """
   import Bitwise
 
-  alias Ton.Crc16
   alias Ton.Wallet
 
   @bounceable_tag 0x11
@@ -61,7 +60,7 @@ defmodule Ton.Address do
     hash = Wallet.hash(wallet)
 
     address = <<tag, wallet.workchain>> <> hash
-    checksum = Crc16.calc(address)
+    checksum = EvilCrc32c.crc16(address)
 
     address_with_checksum = address <> checksum
 
@@ -89,7 +88,7 @@ defmodule Ton.Address do
   defp check_length(_address_binary), do: {:error, :invalid_length}
 
   defp check_crc(<<address::binary-size(34), checksum_code::binary-size(2)>>) do
-    if Crc16.calc(address) == checksum_code do
+    if EvilCrc32c.crc16(address) == checksum_code do
       {:ok, address}
     else
       {:error, :invalid_crc}

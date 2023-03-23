@@ -143,7 +143,7 @@ defmodule Ton.Cell do
       end)
 
     if hash_crc32 do
-      serialization <> EvilCrc32c.calc!(serialization)
+      serialization <> EvilCrc32c.crc32c!(serialization)
     else
       serialization
     end
