@@ -4,7 +4,7 @@ defmodule Ton.MixProject do
   def project do
     [
       app: :ton,
-      version: "0.3.4",
+      version: "0.4.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -15,10 +15,6 @@ defmodule Ton.MixProject do
         links: %{"GitHub" => "https://github.com/ayrat555/ton"},
         files: [
           "mix.exs",
-          "native/crc16/.cargo/config.toml",
-          "native/crc16/src",
-          "native/crc16/Cargo.toml",
-          "native/crc16/Cargo.lock",
           "lib",
           "LICENSE",
           "README.md",

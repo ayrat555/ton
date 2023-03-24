@@ -13,14 +13,12 @@ The library doesn't include an http client
 
 ## Installation
 
-The library requires Rust
-
 The package can be installed by adding `ton` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:ton, "~> 0.3.4"}
+    {:ton, "~> 0.4.0"}
   ]
 end
 ```
