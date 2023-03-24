@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0 (2023-03-24)
+
+  * Use precompiled rust nifs. Rust is not required anymore
+
 ## 0.3.4 (2023-01-22)
 
   * Update `cafezinho` to 0.3.1 - [#26](https://github.com/ayrat555/ton/pull/26)
