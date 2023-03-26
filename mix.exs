@@ -37,7 +37,7 @@ defmodule Ton.MixProject do
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
       {:ex_pbkdf2, "~> 0.8.0"},
       {:cafezinho, "~> 0.4.0"},
-      {:mnemoniac, "~> 0.1.1"},
+      {:mnemoniac, "~> 0.1.2"},
       {:evil_crc32c, "~> 0.2.5"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
