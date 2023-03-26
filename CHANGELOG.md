@@ -1,5 +1,10 @@
 # Changelog
 
+
+## 0.4.1 (2023-03-26)
+
+  * Update mnemoniac (fix warnings) - [#38](https://github.com/ayrat555/ton/pull/38)
+
 ## 0.4.0 (2023-03-24)
 
   * Use precompiled rust nifs. Rust is not required anymore
