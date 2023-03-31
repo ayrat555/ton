@@ -62,7 +62,7 @@ defmodule Ton.BitBuilder do
 
   @spec write_buffer(t(), [non_neg_integer()]) :: BitBuilder.t()
   def write_buffer(bitbuilder, src) do
-    byte_size = byte_size(src)
+    byte_size = Enum.count(src)
 
     if rem(bitbuilder.length, 8) == 0 do
       if bitbuilder.length + byte_size * 8 > bitbuilder.buffer.length * 8 do
@@ -71,10 +71,10 @@ defmodule Ton.BitBuilder do
 
       add_length(%{bitbuilder | array: bitbuilder.array ++ src}, byte_size * 8)
     else
-      Enum.reduce(0..(byte_size - 1), bitbuilder, fn idx ->
+      Enum.reduce(0..(byte_size - 1), bitbuilder, fn idx, acc ->
         value = Enum.at(src, idx)
 
-        write_uint(bitbuilder, value, 8)
+        write_uint(acc, value, 8)
       end)
     end
   end
