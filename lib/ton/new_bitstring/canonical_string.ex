@@ -1,5 +1,8 @@
 defmodule Ton.NewBitstring.CanonicalString do
   alias Ton.BitBuilder
+  alias Ton.NewBitstring
+
+  def to_string(%NewBitstring{length: 0}), do: ""
 
   def to_string(bitstring) do
     padded_buffer = padded_buffer(bitstring)
