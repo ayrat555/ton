@@ -22,6 +22,15 @@ defmodule Ton.NewBitstring do
     }
   end
 
+  @spec empty() :: t()
+  def empty do
+    %__MODULE__{
+      data: [],
+      offset: 0,
+      length: 0
+    }
+  end
+
   @spec at(t(), non_neg_integer()) :: boolean()
   def at(bitstring, index) do
     if index >= bitstring.length do
