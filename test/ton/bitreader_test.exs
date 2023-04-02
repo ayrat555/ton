@@ -1,6 +1,7 @@
 defmodule Ton.BitReaderTest do
   use ExUnit.Case
 
+  alias Ton.Address
   alias Ton.BitBuilder
   alias Ton.BitReader
 
@@ -131,5 +132,39 @@ defmodule Ton.BitReaderTest do
         assert b == read_value
       end)
     end
+  end
+
+  describe "read_address/1" do
+    test "reads address" do
+      Enum.each(0..1_000, fn _ ->
+        a = if Enum.random(1..10) == 10, do: random_address(-1), else: nil
+        b = random_address(0)
+
+        bitstring =
+          BitBuilder.new()
+          |> BitBuilder.write_address(a)
+          |> BitBuilder.write_address(b)
+          |> BitBuilder.build()
+
+        reader = BitReader.new(bitstring)
+
+        assert {updated_reader, read_value} = BitReader.maybe_load_address(reader)
+        assert a == read_value
+
+        assert {_updated_reader, read_value} = BitReader.maybe_load_address(updated_reader)
+        assert b == read_value
+      end)
+    end
+  end
+
+  defp random_address(workchain) do
+    hash =
+      Enum.reduce(0..31, <<>>, fn _, acc ->
+        val = Enum.random(0..255)
+
+        acc <> <<val>>
+      end)
+
+    %Address{hash: hash, workchain: workchain}
   end
 end

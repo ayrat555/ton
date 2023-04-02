@@ -250,7 +250,7 @@ defmodule Ton.BitReader do
   defp do_preload_buffer(bitreader, bytes, offset) do
     fast_buffer = NewBitstring.subbuffer(bitreader.bits, offset, bytes * 8)
 
-    if Enum.empty?(fast_buffer) do
+    if is_nil(fast_buffer) do
       result =
         Enum.reduce(0..(bytes - 1), [], fn i, acc ->
           uint = do_preload_uint(bitreader, 8, offset + i * 8)
@@ -276,7 +276,11 @@ defmodule Ton.BitReader do
     end
 
     wc = do_preload_int(bitreader, 8, bitreader.offset + 3)
-    hash = do_preload_buffer(bitreader, 32, bitreader.offset + 11)
+
+    hash =
+      bitreader
+      |> do_preload_buffer(32, bitreader.offset + 11)
+      |> :binary.list_to_bin()
 
     {move_offset(bitreader, 267), %Address{workchain: wc, hash: hash}}
   end
