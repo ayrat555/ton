@@ -112,11 +112,11 @@ defmodule Ton.BitReader do
   end
 
   def load_coins(bitreader) do
-    load_uint(bitreader, 4)
+    load_var_uint(bitreader, 4)
   end
 
   def preload_coins(bitreader) do
-    preload_uint(bitreader, 4)
+    preload_var_uint(bitreader, 4)
   end
 
   def load_address(bitreader) do
