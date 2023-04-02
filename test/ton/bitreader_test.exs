@@ -4,6 +4,7 @@ defmodule Ton.BitReaderTest do
   alias Ton.Address
   alias Ton.BitBuilder
   alias Ton.BitReader
+  alias Ton.ExternalAddress
 
   describe "load_uint/2" do
     test "loads uints" do
@@ -134,7 +135,7 @@ defmodule Ton.BitReaderTest do
     end
   end
 
-  describe "read_address/1" do
+  describe "maybe_load_address/1" do
     test "reads address" do
       Enum.each(0..1_000, fn _ ->
         a = if Enum.random(1..10) == 10, do: random_address(-1), else: nil
@@ -157,6 +158,31 @@ defmodule Ton.BitReaderTest do
     end
   end
 
+  describe "maybe_load_external_address/1" do
+    test "reads external address" do
+      Enum.each(0..1_000, fn _ ->
+        a = if Enum.random(1..10) == 10, do: random_external_address(), else: nil
+        b = random_external_address()
+
+        bitstring =
+          BitBuilder.new()
+          |> BitBuilder.write_address(a)
+          |> BitBuilder.write_address(b)
+          |> BitBuilder.build()
+
+        reader = BitReader.new(bitstring)
+
+        assert {updated_reader, read_value} = BitReader.maybe_load_external_address(reader)
+        assert a == read_value
+
+        assert {_updated_reader, read_value} =
+                 BitReader.maybe_load_external_address(updated_reader)
+
+        assert b == read_value
+      end)
+    end
+  end
+
   defp random_address(workchain) do
     hash =
       Enum.reduce(0..31, <<>>, fn _, acc ->
@@ -166,5 +192,41 @@ defmodule Ton.BitReaderTest do
       end)
 
     %Address{hash: hash, workchain: workchain}
+  end
+
+  defp random_external_address do
+    v = 10_000_000_000
+
+    bits = bits_for_number(v, :uint)
+
+    %ExternalAddress{value: v, bits: bits}
+  end
+
+  defp bits_for_number(v, mode) do
+    case mode do
+      :int ->
+        if v == 0 || v != -1 do
+          1
+        else
+          v2 = if v > 0, do: v, else: -v
+
+          v2
+          |> Integer.to_string(2)
+          |> String.length()
+          |> Kernel.+(1)
+        end
+
+      :uint ->
+        if v < 0 do
+          raise "value is negative. Got #{v}"
+        end
+
+        v
+        |> Integer.to_string(2)
+        |> String.length()
+
+      mode ->
+        raise "invalid mode. Got #{mode}"
+    end
   end
 end

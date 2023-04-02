@@ -292,10 +292,10 @@ defmodule Ton.BitReader do
       raise "Invalid address"
     end
 
-    bits = do_preload_uint(bitreader, 9, bitreader.offset + 1)
+    bits = do_preload_uint(bitreader, 9, bitreader.offset + 2)
     value = do_preload_uint(bitreader, bits, bitreader.offset + 11)
 
-    {move_offset(bitreader, 11), %ExternalAddress{bits: bits, value: value}}
+    {move_offset(bitreader, 11 + bits), %ExternalAddress{bits: bits, value: value}}
   end
 
   defp move_offset(bitreader, count) do
