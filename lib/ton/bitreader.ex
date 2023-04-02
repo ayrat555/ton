@@ -217,9 +217,11 @@ defmodule Ton.BitReader do
       sign = NewBitstring.at(bitreader.bits, offset)
 
       result =
-        Enum.reduce(0..(bit_count - 1), 0, fn i, acc ->
+        Enum.reduce(0..(bit_count - 2), 0, fn i, acc ->
           if NewBitstring.at(bitreader.bits, offset + 1 + i) do
             acc + (1 <<< (bit_count - i - 1 - 1))
+          else
+            acc
           end
         end)
 
