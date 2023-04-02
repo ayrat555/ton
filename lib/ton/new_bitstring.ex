@@ -82,10 +82,19 @@ defmodule Ton.NewBitstring do
       raise "Offset #{offset} + Length #{length} > #{bitstring.length} is out of bounds"
     end
 
-    start_idx = (bitstring.offset + offset) >>> 3
-    end_idx = start_idx + (length >>> 3)
+    cond do
+      rem(length, 8) != 0 ->
+        nil
 
-    Enum.slice(bitstring.data, start_idx, end_idx)
+      rem(bitstring.offset + offset, 8) != 0 ->
+        nil
+
+      true ->
+        start_idx = (bitstring.offset + offset) >>> 3
+        end_idx = start_idx + (length >>> 3)
+
+        Enum.slice(bitstring.data, start_idx, end_idx)
+    end
   end
 
   @spec equal?(t(), t()) :: boolean()
