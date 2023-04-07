@@ -1,9 +1,9 @@
-defmodule Ton.BitReaderTest do
+defmodule Ton.Core.BitReaderTest do
   use ExUnit.Case
 
   alias Ton.Address
-  alias Ton.BitBuilder
-  alias Ton.BitReader
+  alias Ton.Core.BitBuilder
+  alias Ton.Core.BitReader
   alias Ton.ExternalAddress
 
   describe "load_uint/2" do

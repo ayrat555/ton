@@ -1,40 +1,40 @@
-defmodule Ton.NewBitstringTest do
+defmodule Ton.Core.BitstringTest do
   use ExUnit.Case
 
-  alias Ton.BitBuilder
-  alias Ton.NewBitstring
-  alias Ton.NewBitstring.CanonicalString
+  alias Ton.Core.BitBuilder
+  alias Ton.Core.Bitstring
+  alias Ton.Core.Bitstring.CanonicalString
 
   describe "at/2" do
     test "reads bits" do
-      bitstring = NewBitstring.new([170], 0, 8)
+      bitstring = Bitstring.new([170], 0, 8)
 
-      assert true == NewBitstring.at(bitstring, 0)
-      assert false == NewBitstring.at(bitstring, 1)
-      assert true == NewBitstring.at(bitstring, 2)
-      assert false == NewBitstring.at(bitstring, 3)
-      assert true == NewBitstring.at(bitstring, 4)
-      assert false == NewBitstring.at(bitstring, 5)
-      assert true == NewBitstring.at(bitstring, 6)
-      assert false == NewBitstring.at(bitstring, 7)
+      assert true == Bitstring.at(bitstring, 0)
+      assert false == Bitstring.at(bitstring, 1)
+      assert true == Bitstring.at(bitstring, 2)
+      assert false == Bitstring.at(bitstring, 3)
+      assert true == Bitstring.at(bitstring, 4)
+      assert false == Bitstring.at(bitstring, 5)
+      assert true == Bitstring.at(bitstring, 6)
+      assert false == Bitstring.at(bitstring, 7)
       assert "AA" == CanonicalString.to_string(bitstring)
     end
   end
 
   describe "equal?/2" do
     test "compares bitstrings" do
-      a = NewBitstring.new([170], 0, 8)
-      b = NewBitstring.new([170], 0, 8)
-      c = NewBitstring.new([0, 170], 8, 8)
-      d = NewBitstring.new([0, 169], 8, 8)
-      e = NewBitstring.new([169], 0, 8)
+      a = Bitstring.new([170], 0, 8)
+      b = Bitstring.new([170], 0, 8)
+      c = Bitstring.new([0, 170], 8, 8)
+      d = Bitstring.new([0, 169], 8, 8)
+      e = Bitstring.new([169], 0, 8)
 
-      assert NewBitstring.equal?(a, b)
-      assert NewBitstring.equal?(b, a)
-      assert NewBitstring.equal?(a, c)
-      assert NewBitstring.equal?(c, a)
-      refute NewBitstring.equal?(a, d)
-      refute NewBitstring.equal?(a, e)
+      assert Bitstring.equal?(a, b)
+      assert Bitstring.equal?(b, a)
+      assert Bitstring.equal?(a, c)
+      assert Bitstring.equal?(c, a)
+      refute Bitstring.equal?(a, d)
+      refute Bitstring.equal?(a, e)
 
       assert "AA" == CanonicalString.to_string(a)
       assert "AA" == CanonicalString.to_string(b)
@@ -44,8 +44,8 @@ defmodule Ton.NewBitstringTest do
 
   describe "subbufer/3" do
     test "returns subbufer" do
-      bitstring = NewBitstring.new([1, 2, 3, 4, 5, 6, 7, 8], 0, 64)
-      subbuffer = NewBitstring.subbuffer(bitstring, 0, 16)
+      bitstring = Bitstring.new([1, 2, 3, 4, 5, 6, 7, 8], 0, 64)
+      subbuffer = Bitstring.subbuffer(bitstring, 0, 16)
 
       assert [1, 2] == subbuffer
     end
@@ -120,7 +120,7 @@ defmodule Ton.NewBitstringTest do
       |> Enum.each(fn {bit, index} ->
         value = bit == "1"
 
-        assert NewBitstring.at(bitstring, index) == value
+        assert Bitstring.at(bitstring, index) == value
       end)
 
       assert result == CanonicalString.to_string(bitstring)

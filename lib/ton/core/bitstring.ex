@@ -1,4 +1,4 @@
-defmodule Ton.NewBitstring do
+defmodule Ton.Core.Bitstring do
   import Bitwise
 
   defstruct [:data, :offset, :length]

@@ -1,9 +1,9 @@
-defmodule Ton.BitBuilderTest do
+defmodule Ton.Core.BitBuilderTest do
   use ExUnit.Case
 
   alias Ton.Address
-  alias Ton.BitBuilder
-  alias Ton.NewBitstring.CanonicalString
+  alias Ton.Core.BitBuilder
+  alias Ton.Core.Bitstring.CanonicalString
 
   describe "write_uint/3" do
     test "serializez uints" do

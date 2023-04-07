@@ -1,9 +1,9 @@
-defmodule Ton.BitBuilder do
+defmodule Ton.Core.BitBuilder do
   import Bitwise
 
   alias Ton.Address
+  alias Ton.Core.Bitstring
   alias Ton.ExternalAddress
-  alias Ton.NewBitstring
 
   @type t :: %__MODULE__{
           length: non_neg_integer(),
@@ -54,7 +54,7 @@ defmodule Ton.BitBuilder do
   @spec write_bits(BitBuilder.t(), Bitstring.t()) :: BitBuilder.t()
   def write_bits(bitbuilder, src) do
     Enum.reduce(0..(src.length - 1), bitbuilder, fn idx, acc ->
-      bit = NewBitstring.at(src, idx)
+      bit = Bitstring.at(src, idx)
 
       write_bit(acc, bit)
     end)
@@ -271,9 +271,9 @@ defmodule Ton.BitBuilder do
     end
   end
 
-  @spec build(t()) :: NewBitstring.t()
+  @spec build(t()) :: Bitstring.t()
   def build(bitbuilder) do
-    NewBitstring.new(bitbuilder.array, 0, bitbuilder.length)
+    Bitstring.new(bitbuilder.array, 0, bitbuilder.length)
   end
 
   defp number_to_bits(current_number, acc \\ [])

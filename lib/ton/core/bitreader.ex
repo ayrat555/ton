@@ -1,6 +1,6 @@
-defmodule Ton.BitReader do
-  alias Ton.NewBitstring
+defmodule Ton.Core.BitReader do
   alias Ton.Address
+  alias Ton.Core.Bitstring
   alias Ton.ExternalAddress
 
   import Bitwise
@@ -38,23 +38,23 @@ defmodule Ton.BitReader do
   end
 
   def load_bit(bitreader) do
-    bit = NewBitstring.at(bitreader.bits, bitreader.offset)
+    bit = Bitstring.at(bitreader.bits, bitreader.offset)
 
     {move_offset(bitreader, 1), bit}
   end
 
   def preload_bit(bitreader) do
-    NewBitstring.at(bitreader.bits, bitreader.offset)
+    Bitstring.at(bitreader.bits, bitreader.offset)
   end
 
   def load_bits(bitreader, bit_count) do
-    substring = NewBitstring.substring(bitreader.bits, bitreader.offset, bit_count)
+    substring = Bitstring.substring(bitreader.bits, bitreader.offset, bit_count)
 
     {move_offset(bitreader, bit_count), substring}
   end
 
   def preload_bits(bitreader, bit_count) do
-    NewBitstring.substring(bitreader.bits, bitreader.offset, bit_count)
+    Bitstring.substring(bitreader.bits, bitreader.offset, bit_count)
   end
 
   def load_buffer(bitreader, bytes) do
@@ -197,13 +197,13 @@ defmodule Ton.BitReader do
 
     padding_length = skip_padding(bitreader, bit_count)
 
-    result = NewBitstring.substring(bitreader.bits, bitreader.offset, padding_length)
+    result = Bitstring.substring(bitreader.bits, bitreader.offset, padding_length)
 
     {move_offset(bitreader, bit_count), result}
   end
 
   defp skip_padding(bitreader, length) do
-    if NewBitstring.at(bitreader.bits, bitreader.offset + length - 1) do
+    if Bitstring.at(bitreader.bits, bitreader.offset + length - 1) do
       length - 1
     else
       skip_padding(bitreader, length - 1)
@@ -214,11 +214,11 @@ defmodule Ton.BitReader do
     if bit_count == 0 do
       0
     else
-      sign = NewBitstring.at(bitreader.bits, offset)
+      sign = Bitstring.at(bitreader.bits, offset)
 
       result =
         Enum.reduce(0..(bit_count - 2), 0, fn i, acc ->
-          if NewBitstring.at(bitreader.bits, offset + 1 + i) do
+          if Bitstring.at(bitreader.bits, offset + 1 + i) do
             acc + (1 <<< (bit_count - i - 1 - 1))
           else
             acc
@@ -238,7 +238,7 @@ defmodule Ton.BitReader do
       0
     else
       Enum.reduce(0..(bit_count - 1), 0, fn i, acc ->
-        if NewBitstring.at(bitreader.bits, offset + i) do
+        if Bitstring.at(bitreader.bits, offset + i) do
           acc + (1 <<< (bit_count - i - 1))
         else
           acc
@@ -248,7 +248,7 @@ defmodule Ton.BitReader do
   end
 
   defp do_preload_buffer(bitreader, bytes, offset) do
-    fast_buffer = NewBitstring.subbuffer(bitreader.bits, offset, bytes * 8)
+    fast_buffer = Bitstring.subbuffer(bitreader.bits, offset, bytes * 8)
 
     if is_nil(fast_buffer) do
       result =

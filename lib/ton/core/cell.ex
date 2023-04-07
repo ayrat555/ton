@@ -1,5 +1,5 @@
-defmodule Ton.NewCell do
-  alias Ton.NewBitstring
+defmodule Ton.Core.Cell do
+  alias Ton.Core.Bitstring
 
   defstruct [:refs, :bits, :type, :mask]
 
