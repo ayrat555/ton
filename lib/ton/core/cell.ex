@@ -4,7 +4,7 @@ defmodule Ton.Core.Cell do
   defstruct [:refs, :bits, :type, :mask]
 
   def new(params \\ []) do
-    bits = Keyword.get(params, :bits, NewBitstring.empty())
+    bits = Keyword.get(params, :bits, Bitstring.empty())
     refs = Keyword.get(params, :refs, [])
 
     if Keyword.get(params, :exotic) do
@@ -20,5 +20,17 @@ defmodule Ton.Core.Cell do
         raise "Bits overflow: #{bits.length} > 1023"
       end
     end
+  end
+
+  def hash(cell, level \\ 3) do
+    level = Enum.min([Enum.count(cell.hashes) - 1, level])
+
+    Enum.at(cell.hashes, level)
+  end
+
+  def depth(cell, level \\ 3) do
+    level = Enum.min([Enum.count(cell.depths) - 1, level])
+
+    Enum.at(cell.depths, level)
   end
 end
