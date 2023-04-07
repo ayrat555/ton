@@ -1,4 +1,4 @@
-defmodule Ton.NewCell.LevelMask do
+defmodule Ton.Core.Cell.LevelMask do
   import Bitwise
 
   alias Ton.RustUtils
