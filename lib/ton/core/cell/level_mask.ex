@@ -5,7 +5,7 @@ defmodule Ton.Core.Cell.LevelMask do
 
   defstruct [:mask, :hash_index, :hash_count]
 
-  def new(mask) do
+  def new(mask \\ 0) do
     hash_index = count_set_bits(mask)
     hash_count = hash_index + 1
 
