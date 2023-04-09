@@ -3,7 +3,7 @@ defmodule Ton.Core.Cell.Descriptor do
   alias Ton.Core.Utils
 
   def get_refs_descriptor(refs, level, type) do
-    refs.length + if(type != :ordinary, do: 1, else: 0) * 8 + level * 32
+    Enum.count(refs) + if(type != :ordinary, do: 1, else: 0) * 8 + level * 32
   end
 
   def get_bits_descriptor(bits) do
@@ -28,7 +28,7 @@ defmodule Ton.Core.Cell.Descriptor do
     refs_descriptor = get_refs_descriptor(refs, level, type)
     bits_descriptor = get_bits_descriptor(bits)
 
-    acc = refs_descriptor <> bits_descriptor
+    acc = <<refs_descriptor, bits_descriptor>>
 
     padded_bits =
       bits
