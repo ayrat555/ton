@@ -11,6 +11,8 @@ defmodule Ton.Core.Cell.WonderCalculator do
   alias Ton.Core.Cell
   alias Ton.Utils
 
+  defstruct [:mask, :hashes, :depths]
+
   def calculate(type, bits, refs) do
     {level_mask, pruned} =
       case type do
@@ -20,7 +22,7 @@ defmodule Ton.Core.Cell.WonderCalculator do
               acc ||| ref.mask.mask
             end)
 
-          LevelMask.new(mask)
+          {LevelMask.new(mask), nil}
 
         :pruned_branch ->
           pruned = ExoticPruned.parse(bits, refs)
@@ -59,7 +61,7 @@ defmodule Ton.Core.Cell.WonderCalculator do
       Enum.reduce(0..LevelMask.level(level_mask), {%{}, %{}, 0}, fn level_i,
                                                                     {depths, hashes, hash_i} ->
         cond do
-          LevelMask.is_significant(level_mask, level_i) ->
+          !LevelMask.is_significant(level_mask, level_i) ->
             {depths, hashes, hash_i}
 
           hash_i < hash_i_offset ->
@@ -69,7 +71,7 @@ defmodule Ton.Core.Cell.WonderCalculator do
             # bits
             current_bits =
               if hash_i == hash_i_offset do
-                if !(level_i != 0 || type == :pruned_branch) do
+                if !(level_i == 0 || type == :pruned_branch) do
                   raise "Invalid"
                 end
 
@@ -150,7 +152,7 @@ defmodule Ton.Core.Cell.WonderCalculator do
         end)
       end
 
-    %{
+    %__MODULE__{
       mask: level_mask,
       hashes: Enum.reverse(resolved_hashes),
       depths: Enum.reverse(resolved_depths)
