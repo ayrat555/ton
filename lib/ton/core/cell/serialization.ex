@@ -1,8 +1,9 @@
 defmodule Ton.Core.Cell.Serialization do
-  use Bitwise
+  import Bitwise
 
   alias Ton.Core.BitReader
   alias Ton.Core.Bitstring
+  alias Ton.Core.Cell
 
   def read_cell(reader, size_bytes) do
     {reader, d1} = BitReader.load_uint(reader, 8)
@@ -36,7 +37,7 @@ defmodule Ton.Core.Cell.Serialization do
 
     refs = Enum.reverse(refs_reversed)
 
-    {bitreader, {bits, refs, exotic}}
+    {bitreader, Cell.new(bits: bits, refs: refs, exotic: exotic)}
   end
 
   def calc_cell_size(cell, size_bytes) do
@@ -47,7 +48,7 @@ defmodule Ton.Core.Cell.Serialization do
     reader = src |> Bitstring.new(src, 0, byte_size(src)) |> BitReader.new()
     {reader, magic} = BitReader.load_uint(reader, 32)
 
-    cond magic do
+    case magic do
       0x68FF65F3 ->
         {reader, size} = BitReader.load_uint(reader, 8)
         {reader, off_bytes} = BitReader.load_uint(reader, 8)
@@ -56,7 +57,7 @@ defmodule Ton.Core.Cell.Serialization do
         {reader, absent} = BitReader.load_uint(reader, size * 8)
         {reader, total_cell_size} = BitReader.load_uint(reader, off_bytes * 8)
         {reader, index} = BitReader.load_buffer(reader, cells * off_bytes)
-        {reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
+        {_reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
 
         %{
           size: size,
@@ -78,7 +79,9 @@ defmodule Ton.Core.Cell.Serialization do
         {reader, absent} = BitReader.load_uint(reader, size * 8)
         {reader, total_cell_size} = BitReader.load_uint(reader, off_bytes * 8)
         {reader, index} = BitReader.load_buffer(reader, cells * off_bytes)
-        {reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
+        {_reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
+
+        binary_data_size = byte_size(src)
 
         <<binary_data_without_hash::binary-size(binary_data_size - 4),
           expected_hashsum::binary-size(4)>> = src
@@ -113,7 +116,7 @@ defmodule Ton.Core.Cell.Serialization do
 
         {reader, root_reversed} =
           Enum.reduce(0..(roots - 1), {reader, []}, fn _, {reader, acc} ->
-            {reader, cell} = BitReader.load_uint(size * 8)
+            {reader, cell} = BitReader.load_uint(reader, size * 8)
 
             {reader, [cell | acc]}
           end)
@@ -130,6 +133,8 @@ defmodule Ton.Core.Cell.Serialization do
         {reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
 
         if has_crc32c do
+          binary_data_size = byte_size(src)
+
           <<binary_data_without_hash::binary-size(binary_data_size - 4),
             expected_hashsum::binary-size(4)>> = src
 
@@ -155,25 +160,60 @@ defmodule Ton.Core.Cell.Serialization do
     end
   end
 
-  #   def deserialize_boc(src) do
-  # boc = parse_boc(src)
+  def deserialize_boc(src) do
+    boc = parse_boc(src)
 
-  #     reader =
-  #       parsed_boc.cell_data
-  #       |> BitString.new(0, byte_size(parsed_boc.cell_data) * 8)
-  #       |> BitReader.new()
+    reader =
+      parsed_boc.cell_data
+      |> BitString.new(0, byte_size(parsed_boc.cell_data) * 8)
+      |> BitReader.new()
 
-  #     # cells
+    # cells
 
-  #     {reader, cells} =
-  #       if boc.cells > 0 do
-  #         Enum.reduce(0..(boc.cells - 1), {reader, []}, fn _i, {reader, acc} ->
-  #           {reader, cell} = read_cell(reader, boc.size)
+    {reader, result_cells} =
+      if boc.cells > 0 do
+        Enum.reduce(0..(boc.cells - 1), {reader, []}, fn _i, {reader, acc} ->
+          {reader, cell} = read_cell(reader, boc.size)
 
-  #           {reader, [cell]
-  #         end)
-  #       else
-  #         {reader, []}
-  #       end
-  #   end
+          {reader, [%{cell: cell, result: nil} | acc]}
+        end)
+      else
+        {reader, []}
+      end
+
+    result_cells =
+      Enum.reduce((Enum.count(result_cells) - 1)..0, result_cells, fn i, acc ->
+        result_cell = Enum.at(acc, i)
+
+        if result_cell.result do
+          raise "Impossible"
+        end
+
+        refs =
+          result_cell.refs
+          |> Enum.reduce([], fn ref_idx, acc ->
+            ref = Enum.at(result_cells, ref_idx)
+
+            if is_nil(ref.result) do
+              raise "Invalid BOC file"
+            end
+
+            [ref | ref.result]
+          end)
+          |> Enum.reverse()
+
+        updated_result_cell =
+          Map.put(
+            result_cell,
+            :result,
+            Cell.new(bits: result_cell.bits, refs: refs, exotic: result_cell.exotic)
+          )
+
+        List.replace_at(result_cells, i, updated_result_cell)
+      end)
+
+    Enum.map(boc.root, [], fn root_idx ->
+      Enum.at(result_cells, root_idx)
+    end)
+  end
 end
