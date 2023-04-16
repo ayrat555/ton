@@ -49,7 +49,9 @@ defmodule Ton.Core.Cell.Serialization do
   end
 
   def parse_boc(src) do
-    reader = src |> Bitstring.new(0, byte_size(src)) |> BitReader.new()
+    reader =
+      src |> :binary.bin_to_list() |> Bitstring.new(0, byte_size(src) * 8) |> BitReader.new()
+
     {reader, magic} = BitReader.load_uint(reader, 32)
 
     case magic do
@@ -108,16 +110,26 @@ defmodule Ton.Core.Cell.Serialization do
 
       0xB5EE9C72 ->
         {reader, has_idx} = BitReader.load_uint(reader, 1)
+        IO.inspect(has_idx)
         {reader, has_crc32c} = BitReader.load_uint(reader, 1)
-        {reader, _has_cache_bits} = BitReader.load_uint(reader, 1)
+        IO.inspect(has_crc32c)
+        {reader, has_cache_bits} = BitReader.load_uint(reader, 1)
+        IO.inspect(has_cache_bits)
         # Must be 0
-        {reader, _flags} = BitReader.load_uint(reader, 2)
+        {reader, flags} = BitReader.load_uint(reader, 2)
+        IO.inspect(flags)
         {reader, size} = BitReader.load_uint(reader, 3)
+        IO.inspect(size)
         {reader, off_bytes} = BitReader.load_uint(reader, 8)
+        IO.inspect(off_bytes)
         {reader, cells} = BitReader.load_uint(reader, size * 8)
+        IO.inspect(cells)
         {reader, roots} = BitReader.load_uint(reader, size * 8)
+        IO.inspect(roots)
         {reader, absent} = BitReader.load_uint(reader, size * 8)
-        {reader, total_cell_size} = BitReader.load_uint(reader, size * 8)
+        IO.inspect(absent)
+        {reader, total_cell_size} = BitReader.load_uint(reader, off_bytes * 8)
+        IO.inspect(total_cell_size)
 
         {reader, root_reversed} =
           Enum.reduce(0..(roots - 1), {reader, []}, fn _, {reader, acc} ->
@@ -135,6 +147,7 @@ defmodule Ton.Core.Cell.Serialization do
             {reader, nil}
           end
 
+        IO.inspect({reader, total_cell_size})
         {_reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
 
         if has_crc32c do
@@ -170,7 +183,7 @@ defmodule Ton.Core.Cell.Serialization do
 
     reader =
       boc.cell_data
-      |> Bitstring.new(0, byte_size(boc.cell_data) * 8)
+      |> Bitstring.new(0, Enum.count(boc.cell_data) * 8)
       |> BitReader.new()
 
     # cells
