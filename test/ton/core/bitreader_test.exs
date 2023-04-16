@@ -4,6 +4,7 @@ defmodule Ton.Core.BitReaderTest do
   alias Ton.Address
   alias Ton.Core.BitBuilder
   alias Ton.Core.BitReader
+  alias Ton.Core.Utils
   alias Ton.ExternalAddress
 
   describe "load_uint/2" do
@@ -197,36 +198,8 @@ defmodule Ton.Core.BitReaderTest do
   defp random_external_address do
     v = 10_000_000_000
 
-    bits = bits_for_number(v, :uint)
+    bits = Utils.bits_for_number(v, :uint)
 
     %ExternalAddress{value: v, bits: bits}
-  end
-
-  defp bits_for_number(v, mode) do
-    case mode do
-      :int ->
-        if v == 0 || v != -1 do
-          1
-        else
-          v2 = if v > 0, do: v, else: -v
-
-          v2
-          |> Integer.to_string(2)
-          |> String.length()
-          |> Kernel.+(1)
-        end
-
-      :uint ->
-        if v < 0 do
-          raise "value is negative. Got #{v}"
-        end
-
-        v
-        |> Integer.to_string(2)
-        |> String.length()
-
-      mode ->
-        raise "invalid mode. Got #{mode}"
-    end
   end
 end
