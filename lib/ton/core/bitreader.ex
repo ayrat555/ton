@@ -58,13 +58,13 @@ defmodule Ton.Core.BitReader do
   end
 
   def load_buffer(bitreader, bytes) do
-    buffer = do_preload_buffer(bitreader.bits, bytes, bitreader.offset)
+    buffer = do_preload_buffer(bitreader, bytes, bitreader.offset)
 
     {move_offset(bitreader, bytes * 8), buffer}
   end
 
   def preload_buffer(bitreader, bytes) do
-    do_preload_buffer(bitreader.bits, bytes, bitreader.offset)
+    do_preload_buffer(bitreader, bytes, bitreader.offset)
   end
 
   def load_uint(bitreader, bit_count) do

@@ -33,4 +33,32 @@ defmodule Ton.Core.Utils do
     |> Float.ceil()
     |> trunc()
   end
+
+  def bits_for_number(v, mode) do
+    case mode do
+      :int ->
+        if v == 0 || v != -1 do
+          1
+        else
+          v2 = if v > 0, do: v, else: -v
+
+          v2
+          |> Integer.to_string(2)
+          |> String.length()
+          |> Kernel.+(1)
+        end
+
+      :uint ->
+        if v < 0 do
+          raise "value is negative. Got #{v}"
+        end
+
+        v
+        |> Integer.to_string(2)
+        |> String.length()
+
+      mode ->
+        raise "invalid mode. Got #{mode}"
+    end
+  end
 end
