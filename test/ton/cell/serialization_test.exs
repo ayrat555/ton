@@ -13,16 +13,41 @@ defmodule Ton.Core.Cell.SerializationTest do
     "B5EE9C724101010100710000DEFF0020DD2082014C97BA218201339CBAB19F71B0ED44D0D31FD31F31D70BFFE304E0A4F2608308D71820D31FD31FD31FF82313BBF263ED44D0D31FD31FD3FFD15132BAF2A15144BAF2A204F901541055F910F2A3F8009320D74A96D307D402FB00E8D101A4C8CB1FCB1FCBFFC9ED5410BD6DAD"
   ]
 
+  @tests_directory "test/support/test_bocs/"
+
   test "parses wallets" do
     Enum.each(@wallets, fn wallet ->
       src = Base.decode16!(wallet, case: :upper)
 
-      wallet_cell = src |> Serialization.deserialize_boc() |> Enum.at(0)
-
-      serialized_wallet = Serialization.serialize_boc(wallet_cell, false, true)
-
-      assert src == serialized_wallet
-      assert wallet_cell == serialized_wallet |> Serialization.deserialize_boc() |> Enum.at(0)
+      run_test(src)
     end)
+  end
+
+  test "parses very large boc" do
+    boc =
+      @tests_directory
+      |> Kernel.<>("veryLarge.boc")
+      |> File.read!()
+
+    run_test(boc)
+  end
+
+  test "parse many cell boc" do
+    boc =
+      @tests_directory
+      |> Kernel.<>("manyCells.txt")
+      |> File.read!()
+      |> Base.decode64!()
+
+    run_test(boc)
+  end
+
+  defp run_test(src) do
+    wallet_cell = src |> Serialization.deserialize_boc() |> Enum.at(0)
+
+    serialized_wallet = Serialization.serialize_boc(wallet_cell, false, true)
+
+    assert src == serialized_wallet
+    assert wallet_cell == serialized_wallet |> Serialization.deserialize_boc() |> Enum.at(0)
   end
 end
