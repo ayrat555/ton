@@ -3,7 +3,7 @@ defmodule Ton.Cell.TopologicalOrder do
   Cell ordering algorithm
   """
 
-  alias Ton.Cell
+  alias Ton.Core.Cell
 
   @spec sort(Cell.t()) :: [%{cell: Cell.t(), refs: [non_neg_integer()]}] | no_return()
   def sort(root_cell) do

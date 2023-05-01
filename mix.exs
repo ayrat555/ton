@@ -39,6 +39,7 @@ defmodule Ton.MixProject do
       {:cafezinho, "~> 0.4.0"},
       {:mnemoniac, "~> 0.1.2"},
       {:evil_crc32c, "~> 0.2.5"},
+      {:rustler, "~> 0.27.0"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
     ]

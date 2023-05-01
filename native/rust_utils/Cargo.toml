@@ -1,0 +1,13 @@
+[package]
+name = "rust_utils"
+version = "0.1.0"
+authors = []
+edition = "2021"
+
+[lib]
+name = "rust_utils"
+path = "src/lib.rs"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.27.0"
