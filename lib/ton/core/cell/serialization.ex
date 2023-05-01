@@ -30,7 +30,7 @@ defmodule Ton.Core.Cell.Serialization do
 
     {reader, d2} = BitReader.load_uint(reader, 8)
     data_byte_size = Float.ceil(d2 / 2.0) |> trunc()
-    padding_added = rem(d2, 2) == 0
+    padding_added = rem(d2, 2) != 0
 
     # bits
     {bitreader, bits} =
@@ -363,7 +363,8 @@ defmodule Ton.Core.Cell.Serialization do
     builder =
       if has_crc32c do
         crc32 =
-          builder.array
+          builder
+          |> BitBuilder.buffer()
           |> :binary.list_to_bin()
           |> EvilCrc32c.crc32c!()
 

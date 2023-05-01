@@ -71,7 +71,20 @@ defmodule Ton.Core.BitBuilder do
         raise "BitBuilder overflow"
       end
 
-      add_length(%{bitbuilder | array: bitbuilder.array ++ src}, byte_size * 8)
+      add_length(
+        %{
+          bitbuilder
+          | array:
+              Enum.slice(bitbuilder.array, 0, div(bitbuilder.length, 8)) ++
+                src ++
+                Enum.slice(
+                  bitbuilder.array,
+                  div(bitbuilder.length, 8) + byte_size,
+                  Enum.count(bitbuilder.array) - 1
+                )
+        },
+        byte_size * 8
+      )
     else
       Enum.reduce(0..(byte_size - 1), bitbuilder, fn idx, acc ->
         value = Enum.at(src, idx)
