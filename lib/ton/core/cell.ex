@@ -1,6 +1,7 @@
 defmodule Ton.Core.Cell do
   alias Ton.Core.Bitstring
   alias Ton.Core.Cell.Exotic
+  alias Ton.Core.Cell.LevelMask
   alias Ton.Core.Cell.WonderCalculator
 
   defstruct [:refs, :bits, :type, :mask, :depths, :hashes]
@@ -43,7 +44,7 @@ defmodule Ton.Core.Cell do
   end
 
   def level(cell) do
-    cell.mask.level
+    LevelMask.level(cell.mask)
   end
 
   def depth(cell, level \\ 3) do

@@ -67,11 +67,24 @@ defmodule Ton.Core.BitBuilder do
     byte_size = Enum.count(src)
 
     if rem(bitbuilder.length, 8) == 0 do
-      if bitbuilder.length + byte_size * 8 > bitbuilder.buffer.length * 8 do
+      if bitbuilder.length + byte_size * 8 > Enum.count(bitbuilder.array) * 8 do
         raise "BitBuilder overflow"
       end
 
-      add_length(%{bitbuilder | array: bitbuilder.array ++ src}, byte_size * 8)
+      add_length(
+        %{
+          bitbuilder
+          | array:
+              Enum.slice(bitbuilder.array, 0, div(bitbuilder.length, 8)) ++
+                src ++
+                Enum.slice(
+                  bitbuilder.array,
+                  div(bitbuilder.length, 8) + byte_size,
+                  Enum.count(bitbuilder.array) - 1
+                )
+        },
+        byte_size * 8
+      )
     else
       Enum.reduce(0..(byte_size - 1), bitbuilder, fn idx, acc ->
         value = Enum.at(src, idx)
@@ -276,6 +289,15 @@ defmodule Ton.Core.BitBuilder do
   @spec build(t()) :: Bitstring.t()
   def build(bitbuilder) do
     Bitstring.new(bitbuilder.array, 0, bitbuilder.length)
+  end
+
+  @spec buffer(t()) :: [non_neg_integer()]
+  def buffer(bitbuilder) do
+    if rem(bitbuilder.length, 8) != 0 do
+      raise "BitBuilder buffer is not byte aligned"
+    end
+
+    Enum.slice(bitbuilder.array, 0, div(bitbuilder.length, 8))
   end
 
   defp number_to_bits(current_number, acc \\ [])

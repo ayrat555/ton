@@ -9,6 +9,20 @@ defmodule Ton.Core.Cell.Serialization do
   alias Ton.Core.Cell.Descriptor
   alias Ton.Core.Utils
 
+  defmodule Boc do
+    defstruct [
+      :size,
+      :off_bytes,
+      :cells,
+      :roots,
+      :absent,
+      :total_cell_size,
+      :index,
+      :cell_data,
+      :root
+    ]
+  end
+
   def read_cell(reader, size_bytes) do
     {reader, d1} = BitReader.load_uint(reader, 8)
     refs_count = rem(d1, 8)
@@ -16,7 +30,7 @@ defmodule Ton.Core.Cell.Serialization do
 
     {reader, d2} = BitReader.load_uint(reader, 8)
     data_byte_size = Float.ceil(d2 / 2.0) |> trunc()
-    padding_added = rem(d2, 2) == 0
+    padding_added = rem(d2, 2) != 0
 
     # bits
     {bitreader, bits} =
@@ -41,7 +55,7 @@ defmodule Ton.Core.Cell.Serialization do
 
     refs = Enum.reverse(refs_reversed)
 
-    {bitreader, Cell.new(bits: bits, refs: refs, exotic: exotic)}
+    {bitreader, %{bits: bits, refs: refs, exotic: exotic}}
   end
 
   def calc_cell_size(cell, size_bytes) do
@@ -65,7 +79,7 @@ defmodule Ton.Core.Cell.Serialization do
         {reader, index} = BitReader.load_buffer(reader, cells * off_bytes)
         {_reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
 
-        %{
+        %Boc{
           size: size,
           off_bytes: off_bytes,
           cells: cells,
@@ -96,7 +110,7 @@ defmodule Ton.Core.Cell.Serialization do
           raise "Invalid CRC32C"
         end
 
-        %{
+        %Boc{
           size: size,
           off_bytes: off_bytes,
           cells: cells,
@@ -110,26 +124,16 @@ defmodule Ton.Core.Cell.Serialization do
 
       0xB5EE9C72 ->
         {reader, has_idx} = BitReader.load_uint(reader, 1)
-        IO.inspect(has_idx)
         {reader, has_crc32c} = BitReader.load_uint(reader, 1)
-        IO.inspect(has_crc32c)
         {reader, has_cache_bits} = BitReader.load_uint(reader, 1)
-        IO.inspect(has_cache_bits)
         # Must be 0
         {reader, flags} = BitReader.load_uint(reader, 2)
-        IO.inspect(flags)
         {reader, size} = BitReader.load_uint(reader, 3)
-        IO.inspect(size)
         {reader, off_bytes} = BitReader.load_uint(reader, 8)
-        IO.inspect(off_bytes)
         {reader, cells} = BitReader.load_uint(reader, size * 8)
-        IO.inspect(cells)
         {reader, roots} = BitReader.load_uint(reader, size * 8)
-        IO.inspect(roots)
         {reader, absent} = BitReader.load_uint(reader, size * 8)
-        IO.inspect(absent)
         {reader, total_cell_size} = BitReader.load_uint(reader, off_bytes * 8)
-        IO.inspect(total_cell_size)
 
         {reader, root_reversed} =
           Enum.reduce(0..(roots - 1), {reader, []}, fn _, {reader, acc} ->
@@ -147,7 +151,6 @@ defmodule Ton.Core.Cell.Serialization do
             {reader, nil}
           end
 
-        IO.inspect({reader, total_cell_size})
         {_reader, cell_data} = BitReader.load_buffer(reader, total_cell_size)
 
         if has_crc32c do
@@ -161,7 +164,7 @@ defmodule Ton.Core.Cell.Serialization do
           end
         end
 
-        %{
+        %Boc{
           size: size,
           off_bytes: off_bytes,
           cells: cells,
@@ -191,9 +194,9 @@ defmodule Ton.Core.Cell.Serialization do
     {_reader, result_cells} =
       if boc.cells > 0 do
         Enum.reduce(0..(boc.cells - 1), {reader, []}, fn _i, {reader, acc} ->
-          {reader, cell} = read_cell(reader, boc.size)
+          {reader, cell_data} = read_cell(reader, boc.size)
 
-          {reader, [%{cell: cell, result: nil} | acc]}
+          {reader, [Map.put(cell_data, :result, nil) | acc]}
         end)
       else
         {reader, []}
@@ -231,7 +234,7 @@ defmodule Ton.Core.Cell.Serialization do
       end)
 
     Enum.map(boc.root, fn root_idx ->
-      Enum.at(result_cells, root_idx)
+      Enum.at(result_cells, root_idx).result
     end)
   end
 
@@ -306,28 +309,40 @@ defmodule Ton.Core.Cell.Serialization do
     builder =
       total_size
       |> BitBuilder.new()
+
       # Magic
       |> BitBuilder.write_uint(0xB5EE9C72, 32)
+
       # Has index
       |> BitBuilder.write_bit(has_idx)
+
       # Has crc32c
       |> BitBuilder.write_bit(has_crc32c)
+
       # Has cache bits
       |> BitBuilder.write_bit(has_cache_bits)
+
       # Flags
       |> BitBuilder.write_uint(flags, 2)
+
       # Size bytes
       |> BitBuilder.write_uint(size_bytes, 3)
+
       # Offset bytes
       |> BitBuilder.write_uint(offset_bytes, 8)
+
       # Cells num
       |> BitBuilder.write_uint(cells_num, size_bytes * 8)
+
       # Roots num
       |> BitBuilder.write_uint(1, size_bytes * 8)
+
       # Absent num
       |> BitBuilder.write_uint(0, size_bytes * 8)
+
       # Total cell size
       |> BitBuilder.write_uint(total_cell_size, offset_bytes * 8)
+
       # Root id == 0
       |> BitBuilder.write_uint(0, size_bytes * 8)
 
@@ -347,18 +362,23 @@ defmodule Ton.Core.Cell.Serialization do
 
     builder =
       if has_crc32c do
-        crc32 = EvilCrc32c.crc32c!(builder.buffer)
-        BitBuilder.write_buffer(builder, crc32)
+        crc32 =
+          builder
+          |> BitBuilder.buffer()
+          |> :binary.list_to_bin()
+          |> EvilCrc32c.crc32c!()
+
+        BitBuilder.write_buffer(builder, :binary.bin_to_list(crc32))
       else
         builder
       end
 
-    res = BitBuilder.build(builder)
+    res = BitBuilder.buffer(builder)
 
-    if res.length != div(total_size, 8) do
+    if Enum.count(res) != div(total_size, 8) do
       raise "Internal error"
     end
 
-    res
+    :binary.list_to_bin(res)
   end
 end
