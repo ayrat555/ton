@@ -68,7 +68,7 @@ defmodule Ton.CellTest do
                  refs: [2, 3]
                },
                %Ton.Cell{
-                 data: %Ton.Bitstring{array: '@', cursor: 4, length: 8},
+                 data: %Ton.Bitstring{array: ~c"@", cursor: 4, length: 8},
                  kind: :ordinary,
                  refs: [4, 5]
                },
@@ -93,7 +93,7 @@ defmodule Ton.CellTest do
                %Ton.Cell{
                  data: %Ton.Bitstring{array: [0], cursor: 2, length: 8},
                  kind: :ordinary,
-                 refs: '\b\t'
+                 refs: ~c"\b\t"
                },
                %Ton.Cell{
                  data: %Ton.Bitstring{
@@ -116,7 +116,7 @@ defmodule Ton.CellTest do
                %Ton.Cell{
                  data: %Ton.Bitstring{array: [0], cursor: 2, length: 8},
                  kind: :ordinary,
-                 refs: '\n\v'
+                 refs: ~c"\n\v"
                },
                %Ton.Cell{
                  data: %Ton.Bitstring{
@@ -128,9 +128,9 @@ defmodule Ton.CellTest do
                  refs: []
                },
                %Ton.Cell{
-                 data: %Ton.Bitstring{array: 'P', cursor: 4, length: 8},
+                 data: %Ton.Bitstring{array: ~c"P", cursor: 4, length: 8},
                  kind: :ordinary,
-                 refs: '\f\r'
+                 refs: ~c"\f\r"
                },
                %Ton.Cell{
                  data: %Ton.Bitstring{
