@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.4.2 (2023-08-07)
+
+  * Generate raw addresses from wallets - [#53](https://github.com/ayrat555/ton/pull/53)
 
 ## 0.4.1 (2023-03-26)
 
