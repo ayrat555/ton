@@ -58,7 +58,11 @@ defmodule Ton.AddressTest do
       wallet = Wallet.create(keypair.public_key)
 
       assert "EQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjP_m" ==
-               Address.friendly_address(wallet, url_safe: true, bounceable: true, test_only: false)
+               Address.friendly_address(wallet,
+                 url_safe: true,
+                 bounceable: true,
+                 test_only: false
+               )
 
       assert "UQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjKIj" ==
                Address.friendly_address(wallet,
@@ -66,6 +70,20 @@ defmodule Ton.AddressTest do
                  bounceable: false,
                  test_only: false
                )
+    end
+  end
+
+  describe "raw_address/1" do
+    test "generates a raw address" do
+      keypair =
+        Ton.mnemonic_to_keypair(
+          "about about about about about about about about about about about about about about about about about about about about about about about about"
+        )
+
+      wallet = Wallet.create(keypair.public_key)
+
+      assert "0:8020100d41e417e941e6460c47191e38a142fb54e404f6fe1dc6695adb72a98c" ==
+               Address.raw_address(wallet)
     end
   end
 end

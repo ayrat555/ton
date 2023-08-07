@@ -16,11 +16,11 @@ jobs:
         include:
           - pair:
               elixir: '1.14'
-              otp: '24.3'
+              otp: '25.0'
             lint: lint
           - pair:
-              elixir: '1.14'
-              otp: '25.0'
+              elixir: '1.15'
+              otp: '26.0'
             lint: lint
 
     runs-on: ubuntu-latest

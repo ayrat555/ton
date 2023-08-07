@@ -74,6 +74,19 @@ defmodule Ton.Address do
     end
   end
 
+  @spec raw_address(Wallet.t(), atom) :: binary()
+  def raw_address(%Wallet{} = wallet, encoding \\ :base16) do
+    hash = Wallet.hash(wallet)
+
+    encoded_hash =
+      case encoding do
+        :base16 -> Base.encode16(hash, case: :lower)
+        :base64 -> Base.encode64(hash)
+      end
+
+    "#{wallet.workchain}:#{encoded_hash}"
+  end
+
   defp decode_base64(address_str) do
     case address_str
          |> String.replace("-", "+")
