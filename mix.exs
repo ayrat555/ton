@@ -40,7 +40,7 @@ defmodule Ton.MixProject do
       {:mnemoniac, "~> 0.1.2"},
       {:evil_crc32c, "~> 0.2.5"},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false}
     ]
   end
 end
