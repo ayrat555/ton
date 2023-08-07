@@ -63,6 +63,6 @@ jobs:
       - name: Run mix test
         run: mix test
 
-      # - name: Run dialyzer
-      #   run: mix dialyzer
-      #   if: ${{ matrix.lint }}
+      - name: Run dialyzer
+        run: mix dialyzer
+        if: ${{ matrix.lint }}
