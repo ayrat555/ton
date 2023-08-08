@@ -37,8 +37,39 @@ defmodule Ton.Address do
     end
   end
 
-  @spec friendly_address(Wallet.t()) :: binary()
+  @spec friendly_address(Wallet.t(), Keyword.t()) :: binary()
   def friendly_address(%Wallet{} = wallet, params \\ []) do
+    params
+    |> Keyword.put(:hash, Wallet.hash(wallet))
+    |> Keyword.put(:workchain, wallet.workchain)
+    |> do_friendly_address()
+  end
+
+  @spec raw_address(Wallet.t()) :: binary()
+  def raw_address(%Wallet{} = wallet) do
+    hash =
+      wallet
+      |> Wallet.hash()
+      |> Base.encode16(case: :lower)
+
+    "#{wallet.workchain}:#{hash}"
+  end
+
+  @spec raw_address_to_friendly_address(binary(), Keyword.t()) :: binary()
+  def raw_address_to_friendly_address(raw_address, opts \\ []) do
+    [str_workchain | [hex_hash]] = String.split(raw_address, ":")
+    {workchain, ""} = Integer.parse(str_workchain)
+    hash = Base.decode16!(hex_hash, case: :lower)
+
+    opts
+    |> Keyword.put(:hash, hash)
+    |> Keyword.put(:workchain, workchain)
+    |> do_friendly_address()
+  end
+
+  def do_friendly_address(params) do
+    hash = Keyword.fetch!(params, :hash)
+    workchain = Keyword.fetch!(params, :workchain)
     url_safe = Keyword.get(params, :url_safe, true)
     bounceable = Keyword.get(params, :bounceable, true)
     test_only = Keyword.get(params, :test_only, false)
@@ -57,9 +88,7 @@ defmodule Ton.Address do
         tag
       end
 
-    hash = Wallet.hash(wallet)
-
-    address = <<tag, wallet.workchain>> <> hash
+    address = <<tag, workchain>> <> hash
     checksum = EvilCrc32c.crc16(address)
 
     address_with_checksum = address <> checksum
@@ -72,19 +101,6 @@ defmodule Ton.Address do
     else
       Base.encode64(address_with_checksum)
     end
-  end
-
-  @spec raw_address(Wallet.t(), atom) :: binary()
-  def raw_address(%Wallet{} = wallet, encoding \\ :base16) do
-    hash = Wallet.hash(wallet)
-
-    encoded_hash =
-      case encoding do
-        :base16 -> Base.encode16(hash, case: :lower)
-        :base64 -> Base.encode64(hash)
-      end
-
-    "#{wallet.workchain}:#{encoded_hash}"
   end
 
   defp decode_base64(address_str) do

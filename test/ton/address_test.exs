@@ -86,4 +86,13 @@ defmodule Ton.AddressTest do
                Address.raw_address(wallet)
     end
   end
+
+  describe "raw_address_to_friendly_address/1" do
+    test "converts raw address to friendly address" do
+      assert "EQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjP_m" ==
+               Address.raw_address_to_friendly_address(
+                 "0:8020100d41e417e941e6460c47191e38a142fb54e404f6fe1dc6695adb72a98c"
+               )
+    end
+  end
 end
