@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3 (2023-09-09)
+
+  * Convert raw addresses to friendly addresses - [#54](https://github.com/ayrat555/ton/pull/54)
+
 ## 0.4.2 (2023-08-07)
 
   * Generate raw addresses from wallets - [#53](https://github.com/ayrat555/ton/pull/53)
