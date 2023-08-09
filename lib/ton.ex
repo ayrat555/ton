@@ -146,6 +146,26 @@ defmodule Ton do
   end
 
   @doc """
+  Generates a raw address from a wallet struct
+
+  ## Examples
+
+      iex> keypair = Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean absurd okay blue remove neck cash reflect sleep hen portion gossip arrow")
+      iex> wallet = Ton.create_wallet(keypair.public_key)
+      iex> Ton.wallet_to_raw_address(wallet)
+      "0:02f36e20b30f0e64ba0c57afe7af89e4c5a1101656f3a221c739621863cd5e33"
+
+      iex> keypair = Ton.mnemonic_to_keypair("rail sound peasant garment bounce trigger true abuse arctic gravity ribbon ocean okay absurd blue remove neck cash reflect sleep hen portion gossip arrow")
+      iex> wallet = Ton.create_wallet(keypair.public_key)
+      iex> Ton.wallet_to_raw_address(wallet)
+      "0:9f48f826d3f5d2a986d7af82504b7f036be62a8168c8e0409f32ddbe06565780"
+  """
+  @spec wallet_to_raw_address(Wallet.t()) :: binary()
+  def wallet_to_raw_address(wallet) do
+    Address.raw_address(wallet)
+  end
+
+  @doc """
   Create a transfer boc which can be used to submit a transaction
 
   ## Examples
