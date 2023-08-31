@@ -186,6 +186,7 @@ defmodule Ton do
     to_address = Keyword.fetch!(params, :to_address)
     timeout = Keyword.fetch!(params, :timeout)
     comment = Keyword.get(params, :comment)
+    send_mode = Keyword.get(params, :send_mode, 3)
 
     transfer =
       Transfer.new(
@@ -195,7 +196,8 @@ defmodule Ton do
         to: to_address,
         wallet_id: wallet.wallet_id,
         timeout: timeout,
-        body: comment
+        body: comment,
+        send_mode: send_mode
       )
       |> Transfer.serialize_and_sign(secret_key)
 
