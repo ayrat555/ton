@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.3 (2023-09-09)
+## 0.4.4 (2023-08-31)
+
+  * Provide send_mode when creating a transfer - [#55](https://github.com/ayrat555/ton/pull/55)
+
+## 0.4.3 (2023-08-09)
 
   * Convert raw addresses to friendly addresses - [#54](https://github.com/ayrat555/ton/pull/54)
 
