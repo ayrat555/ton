@@ -35,12 +35,12 @@ defmodule Ton.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
-      {:ex_pbkdf2, "~> 0.8.0"},
-      {:cafezinho, "~> 0.4.0"},
+      {:ex_pbkdf2, "~> 0.8.1"},
+      {:cafezinho, "~> 0.4.1"},
       {:mnemoniac, "~> 0.1.2"},
-      {:evil_crc32c, "~> 0.2.5"},
-      {:credo, "~> 1.6", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.3", only: [:dev, :test], runtime: false}
+      {:evil_crc32c, "~> 0.2.6"},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 end
