@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.5 (2023-09-06)
+
+  * Update `cafezinho`, `ex_pbkdf2` and `evil_crc32c` - [#56](https://github.com/ayrat555/ton/pull/56)
+
 ## 0.4.4 (2023-08-31)
 
   * Provide send_mode when creating a transfer - [#55](https://github.com/ayrat555/ton/pull/55)
