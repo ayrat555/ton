@@ -67,12 +67,12 @@ defmodule Ton.Address do
     |> do_friendly_address()
   end
 
-  @spec friendly_address_to_raw_address(binary()) :: binary()
+  @spec friendly_address_to_raw_address(binary()) :: {:ok, String.t()} | {:error, atom()}
   def friendly_address_to_raw_address(address_str) do
     with {:ok, address} <- parse(address_str) do
       encoded_hash = Base.encode16(address.hash, case: :lower)
 
-      "#{address.workchain}:#{encoded_hash}"
+      {:ok, "#{address.workchain}:#{encoded_hash}"}
     end
   end
 
