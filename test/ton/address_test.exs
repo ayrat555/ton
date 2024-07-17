@@ -95,4 +95,13 @@ defmodule Ton.AddressTest do
                )
     end
   end
+
+  describe "friendly_address_to_raw_address/1" do
+    test "converts friendly address to raw address" do
+      assert "0:8020100d41e417e941e6460c47191e38a142fb54e404f6fe1dc6695adb72a98c" ==
+               Address.friendly_address_to_raw_address(
+                 "EQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjP_m"
+               )
+    end
+  end
 end
