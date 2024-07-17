@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.8 (2024-07-17)
+
+  * Fix friendly_address_to_raw_address - [#63](https://github.com/ayrat555/ton/pull/63)
+
 ## 0.4.7 (2024-07-17)
 
   * Add friendly_address_to_raw_address - [#61](https://github.com/ayrat555/ton/pull/61)
