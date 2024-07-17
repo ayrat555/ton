@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.7 (2024-07-17)
+
+  * Add friendly_address_to_raw_address - [#61](https://github.com/ayrat555/ton/pull/61)
+
 ## 0.4.6 (2024-04-08)
 
   * Update `cafezinho`, `ex_pbkdf2` and `evil_crc32c` - [#58](https://github.com/ayrat555/ton/pull/58)
