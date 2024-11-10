@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.9 (2024-11-10)
+
+  *  Update InternalMessage to accept Cell body - [#65](https://github.com/ayrat555/ton/pull/65)
+
 ## 0.4.8 (2024-07-17)
 
   * Fix friendly_address_to_raw_address - [#63](https://github.com/ayrat555/ton/pull/63)
