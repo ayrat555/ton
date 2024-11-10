@@ -29,6 +29,9 @@ defmodule Ton.InternalMessage do
 
           CommonMessageInfo.new(nil, comment)
 
+        body when is_struct(body, Cell) ->
+          CommonMessageInfo.new(nil, body)
+
         _ ->
           CommonMessageInfo.new(nil, nil)
       end

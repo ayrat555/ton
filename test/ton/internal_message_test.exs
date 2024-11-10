@@ -2,6 +2,8 @@ defmodule Ton.InternalMessageTest do
   use ExUnit.Case
 
   alias Ton.Address
+  alias Ton.Bitstring
+  alias Ton.Cell
   alias Ton.InternalMessage
 
   describe "serialize/1" do
@@ -9,9 +11,9 @@ defmodule Ton.InternalMessageTest do
       {:ok, address} = Address.parse("0QCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjBmp")
       internal_message = InternalMessage.new(to: address, value: 1, bounce: true)
 
-      assert %Ton.Cell{
+      assert %Cell{
                refs: [],
-               data: %Ton.Bitstring{
+               data: %Bitstring{
                  length: 1023,
                  array: array,
                  cursor: 392
@@ -27,9 +29,9 @@ defmodule Ton.InternalMessageTest do
       {:ok, address} = Address.parse("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
       internal_message = InternalMessage.new(to: address, value: 1, bounce: false)
 
-      assert %Ton.Cell{
+      assert %Cell{
                refs: [],
-               data: %Ton.Bitstring{
+               data: %Bitstring{
                  length: 1023,
                  array: array,
                  cursor: 392
@@ -45,9 +47,9 @@ defmodule Ton.InternalMessageTest do
       {:ok, address} = Address.parse("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
       internal_message = InternalMessage.new(to: address, value: 1, bounce: false, body: "Hello")
 
-      assert %Ton.Cell{
+      assert %Cell{
                refs: [],
-               data: %Ton.Bitstring{
+               data: %Bitstring{
                  length: 1023,
                  array: array,
                  cursor: 464
@@ -56,6 +58,27 @@ defmodule Ton.InternalMessageTest do
              } = InternalMessage.serialize(internal_message)
 
       assert "42000392875059b1ac00bd98d8fd97394d50d33bccb431fa5413b77b28426795860d8808000000000000000000000000000000000048656c6c6f00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" =
+               array |> :binary.list_to_bin() |> Base.encode16(case: :lower)
+    end
+
+    test "serializes an internal message with Cell body" do
+      {:ok, address} = Address.parse("EQAHJQ6gs2NYAXsxsfsucpqhpneZaGP0qCdu9lCEzysMGzst")
+      body_cell = Cell.new(data: Bitstring.new())
+
+      internal_message =
+        InternalMessage.new(to: address, value: 1, bounce: false, body: body_cell)
+
+      assert %Cell{
+               refs: [],
+               data: %Bitstring{
+                 length: 1023,
+                 array: array,
+                 cursor: 394
+               },
+               kind: :ordinary
+             } = InternalMessage.serialize(internal_message)
+
+      assert "42000392875059b1ac00bd98d8fd97394d50d33bccb431fa5413b77b28426795860d88080000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000" =
                array |> :binary.list_to_bin() |> Base.encode16(case: :lower)
     end
   end
