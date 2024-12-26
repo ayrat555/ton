@@ -18,7 +18,7 @@ The package can be installed by adding `ton` to your list of dependencies in `mi
 ```elixir
 def deps do
   [
-    {:ton, "~> 0.4.9"}
+    {:ton, "~> 0.4.10"}
   ]
 end
 ```

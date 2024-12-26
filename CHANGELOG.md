@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.10 (2024-12-26)
+
+  * Update `cafezinho`, `ex_pbkdf2` and `evil_crc32c` - [#67](https://github.com/ayrat555/ton/pull/67)
+
 ## 0.4.9 (2024-11-10)
 
   *  Update InternalMessage to accept Cell body - [#65](https://github.com/ayrat555/ton/pull/65)
