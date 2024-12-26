@@ -4,7 +4,7 @@ defmodule Ton.MixProject do
   def project do
     [
       app: :ton,
-      version: "0.4.9",
+      version: "0.4.10",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
