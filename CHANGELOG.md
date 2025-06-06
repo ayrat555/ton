@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.5.0 (2025-06-06)
+    * chore: refactor raw address parsing - [#70](https://github.com/ayrat555/ton/pull/70)
+
 ## 0.4.10 (2024-12-26)
 
   * Update `cafezinho`, `ex_pbkdf2` and `evil_crc32c` - [#67](https://github.com/ayrat555/ton/pull/67)
