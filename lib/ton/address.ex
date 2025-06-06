@@ -21,19 +21,10 @@ defmodule Ton.Address do
 
   @spec parse(binary()) :: {:ok, t()} | {:error, atom()}
   def parse(address_str) do
-    with {:ok, binary_address} <- decode_base64(address_str),
-         :ok <- check_length(binary_address),
-         {:ok, <<tag::8, workchain::8, hash::binary-size(32)>>} <- check_crc(binary_address),
-         {:ok, %{test_only: test_only, bounceable: bounceable}} <- check_tag(tag) do
-      workchain =
-        if workchain == 0xFF do
-          -1
-        else
-          workchain
-        end
-
-      {:ok,
-       %__MODULE__{test_only: test_only, bounceable: bounceable, workchain: workchain, hash: hash}}
+    if String.contains?(address_str, ":") do
+      parse_raw_format(address_str)
+    else
+      parse_friendly_format(address_str)
     end
   end
 
@@ -55,15 +46,13 @@ defmodule Ton.Address do
     "#{wallet.workchain}:#{hash}"
   end
 
-  @spec raw_address_to_friendly_address(binary(), Keyword.t()) :: binary()
-  def raw_address_to_friendly_address(raw_address, opts \\ []) do
-    [str_workchain | [hex_hash]] = String.split(raw_address, ":")
-    {workchain, ""} = Integer.parse(str_workchain)
-    hash = Base.decode16!(hex_hash, case: :lower)
+  @spec raw_address_to_friendly_address!(binary(), Keyword.t()) :: binary()
+  def raw_address_to_friendly_address!(raw_address, opts \\ []) do
+    {:ok, address} = parse_raw_format(raw_address)
 
     opts
-    |> Keyword.put(:hash, hash)
-    |> Keyword.put(:workchain, workchain)
+    |> Keyword.put(:hash, address.hash)
+    |> Keyword.put(:workchain, address.workchain)
     |> do_friendly_address()
   end
 
@@ -109,6 +98,38 @@ defmodule Ton.Address do
       |> String.replace("/", "_")
     else
       Base.encode64(address_with_checksum)
+    end
+  end
+
+  defp parse_raw_format(address_str) do
+    with [str_workchain, hex_hash] <- String.split(address_str, ":"),
+         {workchain, ""} <- Integer.parse(str_workchain),
+         {:ok, hash} when byte_size(hash) == 32 <- Base.decode16(hex_hash, case: :lower) do
+      {:ok, %__MODULE__{test_only: false, bounceable: true, workchain: workchain, hash: hash}}
+    else
+      _ -> {:error, :invalid_raw_format}
+    end
+  end
+
+  defp parse_friendly_format(address_str) do
+    with {:ok, binary_address} <- decode_base64(address_str),
+         :ok <- check_length(binary_address),
+         {:ok, <<tag::8, workchain::8, hash::binary-size(32)>>} <- check_crc(binary_address),
+         {:ok, %{test_only: test_only, bounceable: bounceable}} <- check_tag(tag) do
+      workchain =
+        if workchain == 0xFF do
+          -1
+        else
+          workchain
+        end
+
+      {:ok,
+       %__MODULE__{
+         test_only: test_only,
+         bounceable: bounceable,
+         workchain: workchain,
+         hash: hash
+       }}
     end
   end
 

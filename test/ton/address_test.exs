@@ -35,6 +35,22 @@ defmodule Ton.AddressTest do
              } = Address.parse(address)
     end
 
+    test "parses a raw address" do
+      raw_address = "-1:67560e31eae4c26bc8e5ae1f185f25a99c9277a31c6b741436f99c3cc9aa319d"
+
+      assert {
+               :ok,
+               %Ton.Address{
+                 test_only: false,
+                 bounceable: true,
+                 workchain: -1,
+                 hash:
+                   <<103, 86, 14, 49, 234, 228, 194, 107, 200, 229, 174, 31, 24, 95, 37, 169, 156,
+                     146, 119, 163, 28, 107, 116, 20, 54, 249, 156, 60, 201, 170, 49, 157>>
+               }
+             } = Address.parse(raw_address)
+    end
+
     test "fails if address is not base64 encoded" do
       address = "0QCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjB1"
 
@@ -87,12 +103,22 @@ defmodule Ton.AddressTest do
     end
   end
 
-  describe "raw_address_to_friendly_address/1" do
+  describe "raw_address_to_friendly_address!/1" do
     test "converts raw address to friendly address" do
       assert "EQCAIBANQeQX6UHmRgxHGR44oUL7VOQE9v4dxmla23KpjP_m" ==
-               Address.raw_address_to_friendly_address(
+               Address.raw_address_to_friendly_address!(
                  "0:8020100d41e417e941e6460c47191e38a142fb54e404f6fe1dc6695adb72a98c"
                )
+    end
+
+    test "fails on invalid raw address" do
+      assert_raise MatchError,
+                   "no match of right hand side value: {:error, :invalid_raw_format}",
+                   fn ->
+                     Address.raw_address_to_friendly_address!(
+                       "0:8020100d41e417e941e6460c47191e38a142fb54e404f6fe1dc6695adb72a98c12"
+                     )
+                   end
     end
   end
 
