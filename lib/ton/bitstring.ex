@@ -75,7 +75,7 @@ defmodule Ton.Bitstring do
 
   @spec write_bistring(t(), t()) :: t()
   def write_bistring(bitstring, %__MODULE__{cursor: cursor} = second_bitstring) do
-    Enum.reduce(0..(cursor - 1), bitstring, fn idx, acc ->
+    Enum.reduce(0..(cursor - 1)//1, bitstring, fn idx, acc ->
       bit = get_bit(second_bitstring, idx)
 
       write_bit(acc, bit)
@@ -182,7 +182,7 @@ defmodule Ton.Bitstring do
       if top_up > 0 do
         bitstring = write_bit(bitstring, true)
 
-        Enum.reduce((top_up - 2)..0, bitstring, fn _bit, bitstring_acc ->
+        Enum.reduce((top_up - 2)..0//-1, bitstring, fn _bit, bitstring_acc ->
           bitstring = write_bit(bitstring_acc, false)
 
           bitstring

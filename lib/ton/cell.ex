@@ -194,7 +194,7 @@ defmodule Ton.Cell do
 
   defp write_number(binary, number, bytes) do
     number_bin =
-      Enum.reduce((bytes - 1)..0, <<>>, fn i, acc ->
+      Enum.reduce((bytes - 1)..0//-1, <<>>, fn i, acc ->
         acc <> <<number >>> (i * 8) &&& 0xFF>>
       end)
 
