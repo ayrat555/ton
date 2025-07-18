@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.1 (2025-07-18)
+
+  * Update deps -
+  * fix: fix range warnings - [#73](https://github.com/ayrat555/ton/pull/73)
+
 ## 0.5.0 (2025-06-06)
 
   * chore: refactor raw address parsing - [#70](https://github.com/ayrat555/ton/pull/70)
