@@ -41,14 +41,17 @@ jobs:
           - pair:
               elixir: 1.16.1
               otp: 26.2.2
+          - pair:
+              elixir: 1.18.4
+              otp: 27.2.1
             lint: lint
 
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: erlef/setup-beam@v1
+      - uses: erlef/setup-beam@v1.20.4
         with:
           otp-version: ${{matrix.pair.otp}}
           elixir-version: ${{matrix.pair.elixir}}

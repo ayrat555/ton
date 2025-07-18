@@ -73,7 +73,7 @@ defmodule Ton.InternalMessageTest do
                data: %Bitstring{
                  length: 1023,
                  array: array,
-                 cursor: 394
+                 cursor: 392
                },
                kind: :ordinary
              } = InternalMessage.serialize(internal_message)
