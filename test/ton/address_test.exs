@@ -113,7 +113,7 @@ defmodule Ton.AddressTest do
 
     test "fails on invalid raw address" do
       assert_raise MatchError,
-                   "no match of right hand side value: {:error, :invalid_raw_format}",
+                   "no match of right hand side value:\n\n    {:error, :invalid_raw_format}\n",
                    fn ->
                      Address.raw_address_to_friendly_address!(
                        "0:8020100d41e417e941e6460c47191e38a142fb54e404f6fe1dc6695adb72a98c12"
